@@ -1,0 +1,6 @@
+# Runtime dependencies: None
+# This project uses only Python standard library
+
+# Development dependencies (optional)
+ruff>=0.1.0
+pre-commit>=3.0.0

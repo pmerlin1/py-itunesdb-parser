@@ -1,0 +1,42 @@
+# Output files
+*.csv
+ipod_music_library.csv
+on-the-go_*.csv
+my_top_rated.csv
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Testing files
+test_*.csv
+sample_*.csv
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+
+# Sample data (don't commit actual iPod databases)
+iTunes/
+iPod_Control/
+Device/
+*.itdb
+iTunesDB
+Play\ Counts
+
+# Development files (keep these out of git)
+extract_*.py
+parse_*.py
+final_*.py

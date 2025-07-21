@@ -1,0 +1,2869 @@
+
+  ITunesDB Format Documentation
+
+This file contains documentation from the iPodLinux wiki (wikiPodLinux).
+
+License: GNU Free Documentation License 1.2
+Source: https://www.ipodlinux.org/wiki/ITunesDB
+Content available under GNU Free Documentation License 1.2
+
+Original content from wikiPodLinux
+
+    /The title of this article should be *iTunesDB*. The initial letter
+    is capitalized due to technical limitations <http://
+    www.wikipedia.org/wiki/
+    Naming_conventions_%28technical_restrictions%29#Lower_case_first_letter>./
+
+This page details the format of the binary files used on the iPod to
+keep track of the music it contains as well as its play history.
+Collectively we refer to these files as the iTunesDB however there are
+in fact a number of files, each with their own format, that make up this
+database.
+
+*Note that the information on this page is undergoing constant revision
+as new information comes to light. New versions of the iTunes or iPod
+software may cause drastic changes to the information in this document.*
+
+*Subpages*
+Basic Information <http://www.ipodlinux.org/ITunesDB/
+Basic_Information.html>
+iTunesDB File <http://www.ipodlinux.org/ITunesDB/iTunesDB_File.html>
+Play Counts File
+OTG Playlist File
+Equalizer Presets File
+Artwork Database
+Photo Database
+Misc. Files
+
+*Table of contents* [showhide <javascript:toggleToc()>]
+1 Basic information <#Basic_information>
+
+1.1 Endian Note <#Endian_Note>
+
+2 iTunesDB file <#iTunesDB_file>
+
+2.1 Chunk Encoding <#Chunk_Encoding>
+2.2 Database Object <#Database_Object>
+2.3 DataSet <#DataSet>
+2.4 TrackList <#TrackList>
+2.5 Track Item <#Track_Item>
+2.6 Playlist List <#Playlist_List>
+2.7 Playlist <#Playlist>
+
+2.7.1 List Sort Order <#List_Sort_Order>
+2.7.2 Podcasts <#Podcasts>
+
+2.8 Playlist Item <#Playlist_Item>
+2.9 Data Object <#Data_Object>
+
+2.9.1 String Types <#String_Types>
+2.9.2 Podcast URLs (types 15-16) <#Podcast_URLs_.28types_15-16.29>
+2.9.3 Chapter Data (type 17) <#Chapter_Data_.28type_17.29>
+
+2.9.3.1 Chapter Data mhod details <#Chapter_Data_mhod_details>
+2.9.3.2 Chapter Data Atom Layout <#Chapter_Data_Atom_Layout>
+2.9.3.3 Chapter Data Atoms <#Chapter_Data_Atoms>
+2.9.3.4 Chapter Data String Atoms (UTF16)
+<#Chapter_Data_String_Atoms_.28UTF16.29>
+2.9.3.5 Chapter Data String Atoms (UTF8)
+<#Chapter_Data_String_Atoms_.28UTF8.29>
+2.9.3.6 Chapter Data hedr Atom <#Chapter_Data_hedr_Atom>
+
+2.9.4 Smart Playlist Data (type 50) <#Smart_Playlist_Data_.28type_50.29>
+2.9.5 Smart Playlist Rules (type 51) <#Smart_Playlist_Rules_.28type_51.29>
+
+2.9.5.1 Important Note about endian-ness <#Important_Note_about_endian-ness>
+2.9.5.2 Smart Playlist Rule Fields <#Smart_Playlist_Rule_Fields>
+2.9.5.3 Smart Playlist Rule Actions <#Smart_Playlist_Rule_Actions>
+2.9.5.4 Smart Playlist Rule Values <#Smart_Playlist_Rule_Values>
+2.9.5.5 Putting It All Together <#Putting_It_All_Together>
+
+2.9.6 Library Playlist Index (type 52)
+<#Library_Playlist_Index_.28type_52.29>
+2.9.7 Type 53 <#Type_53>
+2.9.8 Type 100 <#Type_100>
+
+2.9.8.1 Playlist Column Definitions Header
+<#Playlist_Column_Definitions_Header>
+2.9.8.2 Column Definition <#Column_Definition>
+2.9.8.3 Playlist Order Entry <#Playlist_Order_Entry>
+
+2.10 Album List <#Album_List>
+2.11 Album Item <#Album_Item>
+
+3 Play Counts file <#Play_Counts_file>
+
+3.1 Play Count Header <#Play_Count_Header>
+3.2 Play Count Entry <#Play_Count_Entry>
+
+4 On The Go Playlist files <#On_The_Go_Playlist_files>
+5 Equalizer Presets file <#Equalizer_Presets_file>
+
+5.1 Equalizer Presets Container <#Equalizer_Presets_Container>
+5.2 Equalizer Preset <#Equalizer_Preset>
+
+6 Artwork Database <#Artwork_Database>
+7 Photo Database <#Photo_Database>
+
+7.1 Data File Object <#Data_File_Object>
+7.2 DataSet <#DataSet_2>
+7.3 Image List <#Image_List>
+7.4 Image Item <#Image_Item>
+7.5 Image Name <#Image_Name>
+7.6 Album List <#Album_List_2>
+7.7 Photo Album <#Photo_Album>
+7.8 Album Item <#Album_Item_2>
+7.9 File List <#File_List>
+7.10 File (Image) <#File_.28Image.29>
+7.11 Data Object <#Data_Object_2>
+
+7.11.1 Container MHODs <#Container_MHODs>
+7.11.2 String MHODs <#String_MHODs>
+
+8 iTunesSD file <#iTunesSD_file>
+9 iTunesStats File <#iTunesStats_File>
+10 iTunesShuffle File <#iTunesShuffle_File>
+11 iTunesPState File <#iTunesPState_File>
+12 iTunesControl File <#iTunesControl_File>
+13 iTunesPrefs File <#iTunesPrefs_File>
+14 winPrefs File <#winPrefs_File>
+15 DeviceInfo File <#DeviceInfo_File>
+16 iEKInfo File <#iEKInfo_File>
+17 WABContactsGroup File <#WABContactsGroup_File>
+18 iTunesLock File <#iTunesLock_File>
+19 PhotosFolderName <#PhotosFolderName>
+20 PhotoFolderPrefs <#PhotoFolderPrefs>
+21 PhotoFolderAlbums <#PhotoFolderAlbums>
+22 iTunesPlaylists <#iTunesPlaylists>
+23 iTunesPodcasts <#iTunesPodcasts>
+24 iTunesVideoPlaylists <#iTunesVideoPlaylists>
+25 Preferences <#Preferences>
+26 _volumelocked <#_volumelocked>
+
+
+→ Subpage: Basic Information <http://www.ipodlinux.org/ITunesDB/
+Basic_Information.html>
+
+
+    Basic information
+
+The database directory on the iPod is */iPod_Control/iTunes/*. This is a
+hidden folder (attrib +h), but is not otherwise protected.
+
+*iPod Database Files* filename 	description
+iTunesDB 	This is the primary database for the iPod. It contains all
+information about the songs that the iPod is capable of playing, as well
+as the playlists. It's never written to by the Apple iPod firmware.
+During an autosync, iTunes completely overwrites this file.
+Play Counts 	This is the return information file for the iPod. It
+contains all information that is available to change via the iPod, with
+regards to the song. When you autosync, iTunes reads this file and
+updates the iTunes database accordingly. After it does this, it erases
+this file, so as to prevent it from duplicating data by mistake. The
+iPod will create this file on playback if it is not there.
+OTGPlaylist / OTGPlaylist_# 	These are the playlist files created by the
+iPod when you create a new playlist. 4th Gen and up iPod's can create
+multiple OTGPlaylists. These have the same format as the 3rd gen models,
+they just get numbers appended to the name. iTunes will turn these into
+normal playlists and then delete these files during an autosync. The
+OTGPlaylists cannot survive changing the contents of the iPod.
+iTunesEQPresets 	This is where the equalizer presets that you create in
+iTunes get stored on the iPod. The format of this file is easy and well
+understood, but strangely, no iPod actually uses this file yet. You can
+create an EQ preset in iTunes, sync with an iPod, and the EQ will be put
+in here by iTunes correctly. But the iPod never reads the file, does not
+use the preset in this file, and just doesn't work correctly in this
+respect. Perhaps it will be fixed in a future firmware release.
+ArtworkDB 	This is where data about artwork is stored on the iPod Photo
+devices. The artwork itself is stored in the \iPod_Control\Artwork
+folder. On 5g iPods the ArtworkDB is stored in the Artwork folder along
+with the data.
+iTunesSD 	This is the database that seems to hold information used by
+the iPod Shuffle device.
+iTunesStats 	The equivalent of the "Play Counts" file for the Shuffle.
+iTunesShuffle 	Contains a list of the tracks on the Shuffle in a random
+order. Possibly used to specify the order in which the songs are shuffled.
+iTunesPState 	Contains the current playback position and volume of the
+iPod shuffle.
+iTunesControl 	Nothing more specific is known, yet.
+iTunesPrefs 	Nothing more specific is known, yet.
+winPrefs 	Nothing more specific is known, yet.
+iEKInfo 	This contains the decryption key for protected M4P playback.
+Previously iSCInfo(?)
+WABContactsGroup 	Nothing more specific is known, yet.
+iTunesLock 	Created whenever iTunes needs exclusive control of the iPod,
+like when reading or writing the iTunesDB file.
+PhotoFolderPrefs 	Stores Photo Folder preferences.
+PhotoFolderAlbums 	Stores Photo Albums.
+iTunesPlaylists 	Nothing more specific is known, yet.
+iTunesPodcasts 	Nothing more specific is known, yet.
+iTunesVideoPlaylists 	Nothing more specific is known, yet.
+
+
+      Endian Note
+
+With some exceptions, most of the data descriptions in this document are
+actually stored in the file in little endian byte order. Meaning that
+you have these representations of the data when looking at the file in a
+hex editor:
+
+"01 00 00 00" = decimal 1
+"10 00 00 00" = decimal 16
+"00 01 00 00" = decimal 256
+
+This means when you read the file, you need to reverse the bytes in
+memory to make sense of them. Keep this in mind when reading this
+document and trying to make sense of an iTunesDB using a hex editor.
+
+The exceptions are noted where appropriate (hopefully). But if you are
+looking at a piece of a file and can't understand the value it holds,
+try reversing the byte order.
+
+Note that this means the values themselves are in reversed byte order.
+The order of the fields described is the same as in this document. So if
+you see that field A is before field B in one of these tables, then when
+you look at the file with a hex editor, field A really will come before
+field B. This has confused some people who always reverse 4 byte chunks
+of data. If you're writing code to read/write these files, I recommend
+against *always* reversing the data in 4 byte blocks. This only makes
+the code more confusing in the long run.
+
+
+→ Subpage: iTunesDB File <http://www.ipodlinux.org/ITunesDB/
+iTunesDB_File.html>
+
+
+    iTunesDB file
+
+The iTunesDB file consists of a sort of tree structure arranged into a
+flat file. Each "object" contains a header followed by some other
+objects. The header contains a couple of size fields that are used to
+define where the header ends and other objects begin. Here's the basic
+structure of it:
+
+<mhbd> - This is a database
+  <mhsd> - This is a list holder, which holds either a mhla
+    <mhla> - This holds a list of albums
+      <mhia> - This describes a particular Album Item
+        <mhod> - These hold strings associated with an album title
+        <mhod> - These hold strings associated with an artist name/title
+      <mhia> - This is another album. And so on.
+        <mhod>...
+        <mhod>...
+      ...
+  <mhsd> - This is a list holder, which holds either a mhlt or an mhlp
+    <mhlt> - This holds a list of all the songs on the iPod
+      <mhit> - This describes a particular song
+        <mhod>... - These hold strings associated with a song
+        <mhod>... - Things like Artist, Song Title, Album, etc.
+      <mhit> - This is another song. And so on.
+        <mhod>...
+        <mhod>...
+      ...
+  <mhsd> - Here's the list holder again.. This time, it's holding an mhlp
+    <mhlp> - This holds a bunch of playlists. In fact, all the playlists.
+      <mhyp> - This is a playlist.
+        <mhod>... - These mhods hold info about the playlists like the name of the list.
+        <mhip>... - This mhip holds a reference to a particular song on the iPod.
+        ...
+      <mhyp> - This is another playlist. And so on.
+        <mhod>... - Note that the mhods also hold other things for smart playlists
+        <mhip>...
+        ...
+      ...
+
+And so on. What follows is a detailed description of these various headers.
+
+
+      Chunk Encoding
+
+Each chunk of the file is encoded in the follow form:
+
+*Chunk Encoding* Offset 	Field 	Size 	Description
+0 	Chunk Type Identifier 	4 	A 4-byte string like "mhbd", "mhlt", etc.
+This identifies what type of chunk is at the current location.
+4 	End of Type-specific Header 	4 	This is a little-endian encoded 32b
+value that points to the end of the chunk-specific header.
+8 	End of Chunk or Number of Children 	4 	This is a little-endian
+encoded 32b value. It either points to the end of the current chunk, or
+the number of children the current chunk has.
+
+The Chunk Type Identifier is intuitive: it's a 4-byte string letting you
+know what you're working with.
+
+The End of Type-specific Header tells you where, relative to offset 0,
+the header section for this chunk ends. The header starts at offset 12
+and runs through to the end of the type-specific header.
+
+The End of Chunk or Number of Children is slightly confusing. Usually,
+it's an "End of Chunk" offset: what the last offset in the current chunk
+is. That is, it tells you how long this chunk and all its children are.
+There are two big exceptions to this: "mhlt" and "mhlp" chunks. In both
+of these, this number is how many top-level children the mhl[pt] chunk has.
+
+
+      Database Object
+
+*mhbd format* offset 	field 	size 	value
+0 	header identifier 	4 	mhbd
+4 	header length 	4 	size of the mhbd header. For dbversion <= 0x15
+(iTunes 7.2 and earlier), the length is 0x68. For dbversion >= 0x17
+(iTunes 7.3 and later), the size is 0xBC.
+8 	total length 	4 	size of the header and all child records (since
+everything is a child of MHBD, this will always be the size of the
+entire file)
+12 	unknown 	4 	always seems to be 1
+16 	version number 	4 	appears to be a version number of the database
+type. 0x09 = iTunes 4.2, 0x0a = iTunes 4.5, 0x0b = iTunes 4.7, 0x0c =
+iTunes 4.71/4.8, 0x0d = iTunes 4.9, 0x0e = iTunes 5, 0x0f = iTunes 6,
+0x10 = iTunes 6.0.1(?), 0x11 = iTunes 6.0.2-6.0.4, 0x12 = iTunes 6.0.5.,
+0x13 = iTunes 7.0, 0x14 = iTunes 7.1, 0x15 = iTunes 7.2, 0x16 = ?, 0x17
+= iTunes 7.3.0, 0x18 = iTunes 7.3.1-7.3.2., 0x19 = iTunes 7.4.
+20 	number of children 	4 	the number of MHSD children. This has been
+observed to be 2 (iTunes 4.8 and earlier) or 3 (iTunes 4.9 and older),
+the third being the separate podcast library in iTunes 4.9. Also it has
+been observed to be 4 (iTunes 7.1, 7.2) or 5 (iTunes 7.3).
+24 	id 	8 	appears to a 64 bit id value for this database. Not checked
+by the iPod, as far as I can tell.
+32 	unknown 	2 	always seems to be 2
+38 	unknown 	8 	Observed in dbversion 0x11 and later. It was thought
+that this field is used to store some sort of starting point to generate
+the item's dbid, but this idea was thrown away.
+48 	unknown 	2 	Observed in dbversion 0x19 and later, and must be set to
+0x01 for the new iPod Nano 3G (video) and iPod Classics. The obscure
+hash at offset 88 needs to be set as well.
+50 	unknown 	20 	Observed in dbversion 0x19 and later for the new iPod
+Nano 3G (video) and iPod Classics. Meaning unknown so far.
+70 	language 	2 	Observed in dbversion 0x13. It looks like this is a
+language id (langauge of the iTunes interface). For example for
+English(United States) this field has values 0x65 and 0x6E which is
+'en'. The size of the filed might be bigger to distinguish different
+'flavors' of a language.
+72 	library persistent id 	8 	Observed in dbversion 0x14. This is a 64-
+bit Persistent ID for this iPod Library. This matches the value of
+"Library Persistent ID" seen in hex form (as a 16-char hex string) in
+the drag object XML when dragging a song from an iPod in iTunes.
+88 	obscure hash 	20 	Observed in dbversion 0x19 for iPod Nano 3G
+(video) and iPod Classics.
+rest of header is zero padded
+
+The Database Object has two or three children, which are Data Sets.
+
+
+      DataSet
+
+*mhsd format* offset 	field 	size 	value
+0 	header identifier 	4 	mhsd
+4 	header length 	4 	size of the mhsd header
+8 	total length 	4 	size of the header and all child records
+12 	type 	4 	A type number.
+
+1 = Track list - contains an MHLT
+2 = Playlist List - contains an MHLP
+3 = Podcast List - optional, probably. Contains an MHLP also.
+This MHLP is basically the same as the full playlist section,
+except it contains the podcasts in a slightly different way.
+See the Playlists section.
+4 = Album List, first seen with iTunes 7.1.
+5 = New Playlist List with Smart Playlists, first seen with iTunes 7.3.
+
+rest of header is zero padded
+
+Depending on the type of Data Set, it will contain either a Track List
+child or a Playlist List child. Order is not guaranteed. Example files
+have contained the type 3 MHSD before the type 2 MHSD. In order for the
+iPod to list podcasts the type 3 Data Set MUST come between the type 1
+and type 2 Data Sets.
+
+
+      TrackList
+
+*mhlt format* offset 	field 	size 	value
+0 	header identifier 	4 	mhlt
+4 	header length 	4 	size of the mhlt header
+8 	number of songs 	4 	the total number of songs in the Track List
+rest of header is zero padded
+
+The Track List has Track Items as its children. The number of Track
+Items is the same as the number of songs.
+
+
+      Track Item
+
+*mhit format* offset 	field 	size 	value
+0 	header identifier 	4 	mhit
+4 	header length 	4 	size of the mhit header. For dbversion <= 0x0b
+(iTunes 4.7 and earlier), the length is 0x9c. For dbversion >= 0x0c
+(iTunes 4.71 and later), the size is 0xf4. For dbversion = 0x12 (iTunes
+6.0.5), 0x13 (iTunes 7.0) the size is 0x148. For dbversion >= 0x14
+(iTunes 7.1) the size is 0x184.
+8 	total length 	4 	size of the header and all child records
+12 	number of strings 	4 	number of strings (mhods) that are children of
+this mhit
+16 	unique id 	4 	unique ID for a track (referenced in playlists)
+20 	visible 	4 	If this value is 1, the song is visible on the iPod. All
+other values cause the file to be hidden. Was previously known as unk1.
+24 	filetype 	4 	This appears to always be 0 on 1st through 4th
+generation hard drive-based iPods. For the iTunesDB that is written to
+the 5th generation iPod (iPod Video) and the iPod Shuffle, iTunes 4.7.1
+(and greater) writes out the file's type as an ANSI string padded with
+spaces. For example, an MP3 file has a filetype of 0x4d503320 -> 0x4d =
+'M', 0x50 = 'P', 0x33 = '3', 0x20 = <space>. AAC is 0x41414320 & "new"
+AAC which is used by iTunes 7, M4A, is 0x4D344120. Protected AAC files
+(purchased from iTunes Store) are M4P = 0x4D345020. Was previously known
+as unk2. This really is an integer field and is reversed in iTunesDB
+used in mobile phones with reversed endianess.
+28 	type1 	1 	CBR MP3s are type 0x00, VBR MP3s are type 0x01, AAC are
+type 0x00
+29 	type2 	1 	CBR MP3s are type 0x01, VBR MP3s are type 0x01, AAC are
+type 0x00 (type1 and type2 used to be one 2 byte field, but by it
+doesn't get reversed in the reversed endian iTunesDB for mobile phones,
+so it must be two fields).
+30 	compilation flag 	1 	1 if the flag is on, 0 if the flag is off
+31 	stars/rating 	1 	the rating of the track * 20. Note that the iPod
+does not update this value here when you change the rating. See the Play
+Counts file for more information.
+32 	last modified time 	4 	last modified time of the track
+36 	size 	4 	size of the track, in bytes
+40 	length 	4 	length of the track, in milliseconds
+44 	track number 	4 	the track number of the track (the 9 in 9/15)
+48 	total tracks 	4 	the total number of tracks on this album (the 15 in
+9/15)
+52 	year 	4 	year of the track
+56 	bitrate 	4 	bitrate of the track (ie, 128, 320, etc)
+60 	sample rate 	4 	sample rate of the track (ie. 44100) multiplied by
+0x10000.
+64 	volume 	4 	Volume adjustment field. This is a value from -255 to 255
+that will be applied to the track on playback. If you adjust the volume
+slider in iTunes track info screen, this is what you are adjusting.
+68 	start time 	4 	time, in milliseconds, that the song will start
+playing at
+72 	stop time 	4 	time, in milliseconds, that the song will stop playing at
+76 	soundcheck 	4 	The SoundCheck value to apply to the song, when
+SoundCheck is switched on in the iPod settings. The value to put in this
+field can be determined by the equation: X = 1000 * 10 ^ (-.1 * Y) where
+Y is the adjustment value in dB and X is the value that goes into the
+SoundCheck field. The value 0 is special, the equation is not used and
+it is treated as "no Soundcheck" (basically the same as the value 1000).
+This equation works perfectly well with ReplayGain derived data instead
+of the iTunes SoundCheck derived information.
+80 	play count 	4 	play count of the song. Note that the iPod does not
+update this value here. See the Play Counts file for more information.
+84 	play count 2 	4 	Also stores the play count of the song. Don't know
+if it ever differs from the above value.
+88 	last played time 	4 	time the song was last played. Note that the
+iPod does not update this value here. See the Play Counts file for more
+information.
+92 	disc number 	4 	disc number, for multi disc sets
+96 	total discs 	4 	total number of discs, for multi disc sets.
+100 	userid 	4 	Apple Store/Audible User ID (for DRM'ed files only, set
+to 0 otherwise). Previously known as unk5.
+104 	date added 	4 	date added to the iPod or iTunes (not certain which)
+108 	bookmark time 	4 	the point, in milliseconds, that the track will
+start playing back at. This is used for AudioBook filetypes (.AA
+and .M4B) based on the file extension. Note that there is also a
+bookmark value in the play counts file that will be set by the iPod and
+can be used instead of this value. See the Play Counts file for more
+information.
+112 	dbid 	8 	Unique 64 bit value that identifies this song across the
+databases on the iPod. For example, this id joins an iTunesDB mhit with
+a ArtworkDB mhii. iTunes appears to randomly create this value for a
+newly formatted iPod, then increments it by 1 for each additional song
+added. Previously known as unk7 and unk8.
+120 	checked 	1 	0 if the track is checked, 1 if it is not (in iTunes)
+121 	application rating 	1 	This is the rating that the song had before
+it was last changed, sorta. If you sync iTunes and the iPod, and they
+have different (new) ratings, the rating from iTunes will go here and
+the iPod rating will take precedence and go into the normal rating
+field. I'm uncertain what exactly this is for, but it's always set to
+what the iTunes rating is before each sync.
+122 	BPM 	2 	the BPM of the track
+124 	artwork count 	2 	The number of album artwork items put into the
+tags of this song. Even if you don't put any artwork items into the tags
+of the song, this value must at least be 1 for the iPod to display any
+artwork stored in the ithmb files.
+126 	unk9 	2 	unknown, but always seems to be 0xffff for MP3/AAC songs,
+0x0 for uncompressed songs (like WAVE format), 0x1 for Audible
+128 	artwork size 	4 	The total size of artwork (in bytes) attached to
+this song (i.e. put into the song as tags). Observed in iPodDB version
+0x0b and with an iPod Photo as well as with iPodDB version 0x0d and an
+iPod Nano.
+132 	unk11 	4 	unknown
+136 	sample rate 2 	4 	The sample rate of the song expressed as an IEEE
+32 bit floating point number. It's uncertain why this is here.
+140 	date released 	4 	date/time added to music store? For podcasts this
+corresponds to the release date as displayed to the right of the podcast
+title. Formerly known as unk13.
+144 	unk14/1 	2 	unknown, but MPEG-1 Layer-3 songs appear to be always
+0x000c, MPEG-2 Layer 3 songs (extrem low bitrate) appear to be 0x0016,
+MPEG-2.5 Layer 3 songs are 0x0020, AAC songs are always 0x0033, Audible
+files are 0x0029, WAV files are 0x0000.
+146 	unk14/2 	2 	probably 1 if played on or more times in iTunes and 0
+otherwise (at least for MP3 -- the value has been observed to be always
+1 for AAC and Audible files, and always 0 for WAV files?)
+148 	unk15 	4 	unknown - used for Apple Store DRM songs (always
+0x01010100?), zero otherwise
+152 	unk16 	4 	unknown
+156 	Skip Count 	4 	Number of times the track has been skipped. Formerly
+unknown 17 (added in dbversion 0x0c)
+160 	Last Skipped 	4 	Date/time last skipped. Formerly unknown 18 (added
+in dbversion 0x0c)
+164 	has_artwork 	1 	added in dbversion 0xd. Seems to be set to 0x02 for
+tracks without associated artwork (even if artwork is present, it will
+not be shown on the iPod) and 0x01 for tracks with associated artwork.
+165 	skip_when_shuffling 	1 	sets "Skip When Shuffling" when set to 0x1
+(added in dbversion 0xd, formerly known as flag2)
+166 	remember_playback_position 	1 	sets "Remember Playback Position"
+when set to 0x1 (added in dbversion 0xd). Note that Protected AAC files
+(.m4b extension) and Audible files (.aa extension) do not set this flag
+or the previous one (skip_when_shuffling), and yet are always
+bookmarkable and are never included in the song shuffle. To determine if
+a file is bookmarkable, therefore, check the file type first. If it's
+not an .m4b or .aa, then check this flag in iTunesDB. (Formerly known as
+flag3)
+167 	flag4 	1 	some kind of "Podcast" flag (added in dbversion 0xd)?
+When this flag is set to 0x1 then the "Now playing" page will not show
+the artist name, but only title and album. When additionally has_artwork
+is 0x2 then there will be a new sub-page on the "Now playing" page with
+information about the podcast/song.
+
+If the track item is a kind of podcast then this flag must be set to 0x1
+or 0x2, otherwise this flag must be set to 0x0. If this flag do not
+follow this, it might be removed from iTunesDB when user change there
+iPod to sync podcasts/songs in iTunes.
+
+168 	dbid2 	8 	Until dbversion 0x12, same data as dbid above (added in
+dbversion 0x0c). Since 0x12, this field value differs from the dbid one.
+176 	lyrics flag 	1 	set to 0x01 if lyrics are stored in the MP3 tags
+("USLT"), 0 otherwise.
+177 	movie file flag 	1 	if 0x1, it is a movie file. Otherwise, it is an
+audio file.
+178 	played_mark 	1 	added in dbversion 0x0c, first values observed in
+0x0d. Observed to be 0x01 for non-podcasts. With podcasts, a value of
+0x02 marks this track with a bullet as 'not played' on the iPod,
+irrespective of the value of play count above. A value of 0x01 removes
+the bullet. Formerly known as unk20.
+179 	unk17 	1 	unknown - added in dbversion 0x0c. So far always 0.
+180 	unk21 	4 	unknown (added in dbversion 0x0c)
+184 	pregap 	4 	Number of samples of silence before the songs starts
+(for gapless playback).
+188 	sample count 	8 	Number of samples in the song (for gapless playback).
+196 	unk25 	4 	unknown (added in dbversion 0x0c)
+200 	postgap 	4 	Number of samples of silence at the end of the song
+(for gapless playback).
+204 	unk27 	4 	unknown - added in dbversion 0x0c, first values observed
+in 0x0d. Appears to be 0x1 for files encoded using the MP3 encoder, 0x0
+otherwise.
+208 	Media Type 	4 	(formerly known as unk28; added in dbversion 0x0c).
+It seems that this field denotes the type of the file on (e.g.) the 5g
+video iPod. It must be set to 0x00000001 for audio files, and set to
+0x00000002 for video files. If set to 0x00, the files show up in both,
+the audio menus ("Songs", "Artists", etc.) and the video menus
+("Movies", "Music Videos", etc.). It appears to be set to 0x20 for music
+videos, and if set to 0x60 the file shows up in "TV Shows" rather than
+"Movies".
+
+The following list summarizes all observed types:
+
+  * 0x00 00 00 00 - Audio/Video
+  * 0x00 00 00 01 - Audio
+  * 0x00 00 00 02 - Video
+  * 0x00 00 00 04 - Podcast
+  * 0x00 00 00 06 - Video Podcast
+  * 0x00 00 00 08 - Audiobook
+  * 0x00 00 00 20 - Music Video
+  * 0x00 00 00 40 - TV Show (shows up ONLY in TV Shows
+  * 0x00 00 00 60 - TV Show (shows up in the Music lists as well)
+
+*Caution:* Even if a track is marked as "Audiobook" here (value 0x08),
+it will *not* show up in the "Audiobooks" menu on the iPod. Only *.aa
+and *.m4b are shown there by recent firmwares. One proven exception: On
+the /nano/ they show if they have the correct media type set here *and*
+the MHIT also has a chapter data mhod <#Chapter_Data_.28Type_17.29>!
+
+212 	season number 	4 	the season number of the track, for TV shows
+only. Previously known as unk29. (added in dbversion 0x0c)
+216 	episode number 	4 	the episode number of the track, for TV shows
+only - although not displayed on the iPod, the episodes are sorted by
+episode number. Previously known as unk30. (added in dbversion 0x0c)
+220 	unk31 	4 	unknown (added in dbversion 0x0c). Has something to do
+with protected files - set to 0x0 for non-protected files.
+224 	unk32 	4 	unknown (added in dbversion 0x0c)
+228 	unk33 	4 	unknown (added in dbversion 0x0c)
+232 	unk34 	4 	unknown (added in dbversion 0x0c)
+236 	unk35 	4 	unknown (added in dbversion 0x0c)
+240 	unk36 	4 	unknown (added in dbversion 0x0c)
+244 	unk37 	4 	unknown (added in dbversion 0x13)
+248 	gaplessData 	4 	The size in bytes from first Synch Frame (which is
+usually the XING frame that includes the LAME tag) until the 8th before
+the last frame. The gapless playback does not work for MP3 files if this
+is set to zero. Maybe the iPod prepares the next track when rest 8
+frames in the actual track. For AAC tracks, this may be zero. (added in
+dbversion 0x13)
+252 	unk38 	4 	unknown (added in dbversion 0x0c)
+256 	gaplessTrackFlag 	2 	if 1, this track has gapless playback data
+(added in dbversion 0x13)
+258 	gaplessAlbumFlag 	2 	if 1, this track does not use crossfading in
+iTunes (added in dbversion 0x13)
+260 	unk39 	20 	Appears to be a hash, not checked by the iPod
+288 	unk40 	4 	unknown (seen set to 0xbf)
+300 	unk41 	4 	unknown
+304 	unk42 	4 	unknown (always 0x00 ?)
+308 	unk43 	4 	unknown (previously length 8, seen as 0x818080808080)
+312 	unk44 	2 	unknown (previously length 8, seen as 0x818080808080)
+314 	AlbumID 	2 	album id from the album list (previously unknown length
+8, seen as 0x818080808080)
+352 	mhii-link 	4 	Setting this offset to != 0 triggers the 'Right-Pane-
+Artwork-Slideshow' on late 2007 iPods (3g Nano) and causes the iPod to
+use this value to do artwork lookups (dbid_1 will be ignored!). This
+value should be set to the id of the corresponding ArtworkDB mhii
+(Offset 16)
+The rest of the mhit is zero padded.
+
+The MHIT is followed by several Data Objects which have string types. At
+minimum, it must have a Location type MHOD, in order to tell the iPod
+where the file is located on the iPod itself. It always has a FileType
+MHOD as well, although it's not totally necessary.
+
+
+      Playlist List
+
+*mhlp format* offset 	field 	size 	value
+0 	header identifier 	4 	mhlp
+4 	header length 	4 	size of the mhlp header
+8 	number of playlists 	4 	the number of playlists on the iPod. This
+includes the Library playlist.
+rest of header is zero padded
+
+The Playlist List has all the playlists as its children. The very first
+playlist *must* be the Library playlist. This is a normal playlist, but
+it has the special "hidden" bit set in it, and it contains all the songs
+on the iPod (in no particular order).
+
+
+      Playlist
+
+*mhyp format* offset 	field 	size 	value
+0 	header identifier 	4 	mhyp
+4 	header length 	4 	size of the mhyp header
+8 	total length 	4 	size of the header and all child records
+12 	Data Object Child Count 	4 	number of Data Objects in the List
+16 	Playlist Item Count 	4 	number of Playlist Items in the List
+20 	Is Master Playlist flag 	1 	1 if the playlist is the Master
+(Library) playlist, 0 if it is not. Only the Master (Library) Playlist
+should have a 1 here.
+21 	unk 	3 	Probably three more flags, the first of which has been
+observed to have been set to 1 for some playlists.
+24 	timestamp 	4 	time of the playlists creation
+28 	persistent playlist ID 	8 	a unique, randomly generated ID for the
+playlist
+36 	unk3 	4 	Always zero?
+40 	String MHOD Count 	2 	This appears to be the number of string MHODs
+(type < 50) associated with this playlist (typically 0x01). Doesn't seem
+to be signficant unless you include Type 52 MHODs. Formerly known as unk4.
+42 	Podcast Flag 	2 	This is set to 0 on normal playlists and to 1 for
+the Podcast playlist. If set to 1, the playlist will not be shown under
+'Playlists' on the iPod, but as 'Podcasts' under the Music menu.. The
+actual title of the Playlist does not matter. If more than one playlist
+is set to 1, they don't show up at all. They also don't show up if you
+set this to 1 on one playlist and 2 on the other. Please note that
+podcast playlists are organized slightly different than ordinary
+playlists (see below).
+44 	List Sort Order 	4 	The field that the playlist will be sorted by.
+See list below.
+rest of header is zero padded
+
+The structure of the Playlists are different than most others. Each
+Playlist looks like this, conceptually:
+
+   <mhyp>
+      <mhod type=1>Playlist Name</mhod>
+      <mhod type=50>Smart Playlist Info</mhod> (optional)
+      <mhod type=51>Smart Playlist Rules</mhod> (optional)
+      ...
+      <mhip>Playlist Item</mhip>
+             <mhod type=100>Position Indicator</mhod>
+      <mhip>Playlist Item</mhip>
+             <mhod type=100>Position Indicator</mhod>
+      ...
+   </mhyp>
+
+The point being that these are all considered in the MHYP for the size
+calculations. However, in the "Data Object" child count, ONLY those
+MHODs that come before the first MHIP are counted. The "position
+indicators" are children of the MHIPs (older firmwares had a bug in this
+respect).
+
+
+        List Sort Order
+
+1 - playlist order (manual sort order)
+2 - ???
+3 - songtitle
+4 - album
+5 - artist
+6 - bitrate
+7 - genre
+8 - kind
+9 - date modified
+10 - track number
+11 - size
+12 - time
+13 - year
+14 - sample rate
+15 - comment
+16 - date added
+17 - equalizer
+18 - composer
+19 - ???
+20 - play count
+21 - last played
+22 - disc number
+23 - my rating
+24 - release date (I guess, it's the value for the "Podcasts" list)
+25 - BPM
+26 - grouping
+27 - category
+28 - description
+29 - show
+30 - season
+31 - episode number
+
+
+        Podcasts
+
+The podcasts playlist is organized slightly differently, in the Type 3
+MHSD. For example:
+
+mhyp (MHODs: 2, MHIPs: 5, hidden: 0, list sort order: 0x18)
+  mhod (type: 1, string: 'Podcasts')
+  mhod (type: 100)
+  mhip (MHODs: 1, groupflag: 256, groupid: 8232, trackid: 0, timestamp: 0, groupref: 0)
+    mhod (type: 1, string: 'Example podcast')
+  mhip (MHODs: 1, groupflag: 0, groupid: 8233, trackid: 8230, timestamp: 3206828281, groupref: 8232)
+    mhod (type: 100)
+  mhip (MHODs: 1, groupflag: 0, groupid: 8234, trackid: 8226, timestamp: 3206828379, groupref: 8232)
+    mhod (type: 100)
+  mhip (MHODs: 1, groupflag: 0, groupid: 8235, trackid: 8228, timestamp: 3206828327, groupref: 8232)
+    mhod (type: 100)
+  mhip (MHODs: 1, groupflag: 0, groupid: 8236, trackid: 8224, timestamp: 3206828394, groupref: 8232)
+    mhod (type: 100)
+
+The first mhip (probably identified by groupflag==256) contains the name
+of a podcast which will then appear as a submenu of the Podcasts menu on
+the iPod. The other mhips (which reference the episodes in that podcast)
+seem to use the groupref field to link to their 'parent' mhip (using the
+groupid field). At the same time the groupids of the episodes are unique
+as well, but don't seem to be used anywhere else.
+
+
+      Playlist Item
+
+*mhip format* offset 	field 	size 	value
+0 	header identifier 	4 	mhip
+4 	header length 	4 	size of the mhip header
+8 	total length 	4 	size of the header and all child records
+12 	Data Object Child Count 	4 	number of mhod following this Playlist
+Item (always 1 so far)
+16 	Podcast Grouping Flag 	2 	Formerly unk1. 0x0 = normal file. 0x100 =
+Podcast Group. Podcast Groups will be followed by a single child, an
+MHOD type 1 string, which specifies the name of the Podcast Group. They
+will also have a 0 (zero) for the Track ID. This field used to be some
+kind of correlation ID or something, but this may have been a bug. In
+any case, the old way breaks iPods now, and this should be set to zero
+on all normal songs.
+18 	unk4 	1 	0 or 1 in iTunes 7.2.
+19 	unk5 	1 	0 or 8 in iTunes 7.2.
+20 	Group ID (?) 	4 	Formerly unk2. A unique ID for the track. It
+appears it is made sure that this ID does not correspond to any real
+track ID. Doesn't seem to correlate to anything, but other bits
+reference it. See Podcast Grouping Reference below.
+24 	track ID 	4 	the ID number of the track in the track list. See Track
+Item for more info
+28 	timestamp 	4 	some kind of time stamp, possibly time the song was
+added to the playlist
+32 	Podcast Grouping Reference 	4 	Formerly unk3. This is the parent
+group that this podcast should be listed under. It should be zero the
+rest of the time.
+rest of header is zero padded
+
+For purposes of size calculations, Playlist Items have no children.
+However, every Playlist Item is invariably followed by a Data Object of
+type 100, which contains nothing but a number that is used to order/sort
+the playlist. See the Playlist description above for more information.
+
+Please note that starting with iTunes 4.9 (mhbd file version number
+0x0d) the Type 100 MHOD following the Playlist Item is considered a
+child of the Playlist Item and is included into the size calculation.
+The old behaviour was probably a bug in iTunes.
+
+
+      Data Object
+
+The Data Object is a complex beast. It's used in many places in the
+iTunesDB file, and there are many forms of it. We'll cover the forms one
+by one.
+
+*mhod types* value 	description
+1	Title
+2	Location (this string should be less than 112 bytes/56 UTF-16 chars
+(not including the terminating \0) or the iPod will skip the song when
+trying to play it)
+3	Album
+4	Artist
+5	Genre
+6	Filetype
+7	EQ Setting
+8	Comment
+9	Category - This is the category ("Technology", "Music", etc.) where
+the podcast was located. Introduced in db version 0x0d.
+12	Composer
+13	Grouping
+14	Description text (such as podcast show notes). Accessible by
+selecting the center button on the iPod, where this string is displayed
+along with the song title, date, and timestamp. Introduced in db version
+0x0d.
+15	Podcast Enclosure URL. Note: this is either a UTF-8 or ASCII encoded
+string (NOT UTF-16). Also, there is no mhod::length value for this type.
+Introduced in db version 0x0d.
+16	Podcast RSS URL. Note: this is either a UTF-8 or ASCII encoded string
+(NOT UTF-16). Also, there is no mhod::length value for this type.
+Introduced in db version 0x0d.
+17	Chapter data. This is a m4a-style entry that is used to display
+subsongs within a mhit. Introduced in db version 0x0d.
+18	Subtitle (usually the same as Description). Introduced in db version
+0x0d.
+19	Show (for TV Shows only). Introduced in db version 0x0d?
+20	Episode # (for TV Shows only). Introduced in db version 0x0d?
+21	TV Network (for TV Shows only). Introduced in db version 0x0d?
+22	Album Artist. Introduced in db version 0x13?
+23	Artist name, for sorting. Artists with names like "The Beatles" will
+be in here as "Beatles, The". Introduced in db version 0x13?
+24	Appears to be a list of keywords pertaining to a track. Introduced in
+db version 0x13?
+25	Locale for TV show? (e.g. "us-tv||0|", v.0x18)
+27	Title, for sorting.
+28	Album, for sorting.
+29	Album-Artist, for sorting.
+30	Composer, for sorting.
+31	TV-Show, for sorting.
+32	Unknown, created by iTunes 7.1 for video tracks. Binary field, no string.
+50	Smart Playlist Data
+51	Smart Playlist Rules
+52	Library Playlist Index
+53	Unknown, created by iTunes 7.2, similar to MHOD52
+100	Seems to vary. iTunes uses it for column sizing info as well as an
+order indicator in playlists.
+200	Album (in Album List, iTunes 7.1)
+201	Artist (in Album List, iTunes 7.1)
+202	Artist, for sorting (in Album List, iTunes 7.1)
+203	Podcast Url (in Album List, iTunes 7.1)
+204	TV Show (in Album List, v. 0x18)
+
+
+        String Types
+
+The simplest form of MHOD. These are any MHOD with a "type" that is less
+than 15.
+
+*mhod format - strings* offset 	field 	size 	value
+0 	header identifier 	4 	mhod
+4 	header length 	4 	size of the mhod header. This is always 0x18 for
+string type MHOD's.
+8 	total length 	4 	size of the header and the string it contains
+12 	type 	4 	the type indicator
+16 	unk1 	4 	unknown
+20 	unk2 	4 	unknown
+24 	position 	4 	In type 100 mhod's in playlists, this is where the
+playlist order info is. It does not seem to be significant in string
+mhod's (except for location - see following notes).
+
+/Note:/ This field does not exist in ArtworkDB string dohms. This was
+observed to be 2 for inversed endian ordered iTunesDBs for mobile phones
+with UTF8 strings and 1 for standard iPod iTunesDBs with UTF16 strings.
+
+/Note:/ If you leave this set to zero on the type 2 (location) string
+MHOD of a Song (mhit) record, the track will show on the menu, but will
+not play.
+
+28 	length 	4 	Length of the string, in bytes. If the string is UTF-16,
+each char takes two bytes. The string in the iTunesDB is not NULL-
+terminated either. Keep this in mind. Be careful with very long strings
+- it has been observed that strings longer than ~512 characters will
+cause the iPod to continously reboot when it attempts to read the database.
+32 	unknown 	4 	unknown. It was thought that this was string encoding: 0
+== UTF-16, 1 == UTF-8, however, recent iTunesDB files have had this set
+to 1 even with UTF-16 strings. Therefore this is definitely incorrect,
+and the correct meaning has not yet been discovered yet.
+36 	unk4 	4 	unknown
+40 	string 	length 	The string.
+string mhods are NOT zero padded
+
+
+        Podcast URLs (types 15-16)
+
+Introduced in db version 0x0d, MHOD's with type 15 and 16 hold the
+Enclosure and RSS URL for the Podcast. The string is probably UTF-8, but
+only Unicode symbols U+0000 through U+007F (a.k.a ASCII) have been
+observed.
+
+*mhod format - podcast urls (types 15-16)* offset 	field 	size 	value
+0 	header identifier 	4 	mhod
+4 	header length 	4 	size of the mhod header. This is always 0x18 for
+string type MHOD's.
+8 	total length 	4 	size of the header and the string it contains
+12 	type 	4 	the type indicator ( 15 or 16 )
+16 	unk1 	4 	unknown (always 0?)
+20 	unk2 	4 	unknown (always 0?)
+24 	string 	(total length - header length) 	The string.
+string mhods are NOT zero padded
+
+
+        Chapter Data (type 17)
+
+The chapter data is a style of data that's very, very out of place in
+this file, but is here nonetheless. It defines where the chapter stops
+are in the track, as well as what info should be displayed for each
+section of the track. It seems that the format of this mhod changed
+significantly over time. The following is analysed from an iTunesDB
+version 0x13 (iTunes 7.0).
+
+
+          Chapter Data mhod details
+
+*mhod format - chapter data (type 17)* offset 	field 	size 	value
+0 	header identifier 	4 	mhod
+4 	header length 	4 	size of the mhod header. This is always 0x18.
+8 	total length 	4 	size of the mhod
+12 	type 	4 	the type indicator ( 0x11 = 17 )
+16 	unk1 	4 	unknown (always 0?)
+20 	unk2 	4 	unknown (always 0?)
+24 	unk3 	4 	unknown (always 0?) This is not part of the header
+(otherwise the header length would have been different), but it is also
+not part of the first atom.
+28 	unk4 	4 	unknown (always 0?) This is not part of the header
+(otherwise the header length would have been different), but it is also
+not part of the first atom.
+32 	unk5 	4 	unknown (always 0?) This is not part of the header
+(otherwise the header length would have been different), but it is also
+not part of the first atom.
+36 	data 	(total length - header length - 12) 	The chapter stop data
+atoms, starting with a "sean" atom (see below).
+
+This part of the mhod is *not little-endian* like the rest of the file.
+It's big-endian/ E.g. the value 0x0123 in a 4 byte word is found as 00
+00 01 23. It is also arranged in a tree like structure, much like the
+iTunesDB itself is, only the information is in a slightly different
+arrangement.
+
+
+          Chapter Data Atom Layout
+
+The atoms appear to be arranged in the following layout:
+
+*sean* (exactly one atom of this type is present,
+        childcount is number of chapters + 1 for the hedr atom)
+   *chap* (chapter indicator, childcount is always 1)
+      *name* (contains a UTF16 string with name of the chapter or Artist name,
+            childcount is always 0)
+   chap (next chapter)
+      name (and so on)...
+   ...
+   *hedr* (signals the end, childcount is always 0)
+
+There are multiple "chap" entries, one for each chapter.
+
+Older DBs seem to have a different, more complex layout, like this:
+
+sean (?)
+ chap (chapter indicator ?)
+  name (contains a UTF16 string with name of the chapter or Artist name)
+  ploc (position/location?)
+   trak (specifies track number, perhaps? This should be obvious after looking at some examples)
+  urlt (contains a UTF16 string with the name of the song in the chapter or some kind of subname)
+  url  (contains a UTF8 string with a URL)
+ chap (next chapter)
+  name (and so on)...
+ ...
+hedr (signals the end)
+
+
+          Chapter Data Atoms
+
+Each atom consists of the following:
+
+*chapter data atom* offset 	field 	size 	value
+0 	size 	4 	size of the atom and all its children
+
+*Caution:* This is different to all other structures in the file, where the
+         name always comes first. Here, the length is the first word of the atom!
+
+4 	atom name 	4 	the name of the atom
+8 	startpos/unk1	4 	/For chap atoms:/ the starting position of this
+chapter in ms, except for the very first chap where this field is 1 (not
+0 as expected).
+
+/For all other atoms:/ always 1?
+
+12 	number of childs 	4 	the number of childs
+16 	unk2 	4 	always 0?
+20 	data 	varies 	some kind of data or children
+
+
+          Chapter Data String Atoms (UTF16)
+
+UTF16 String entries in these atoms (like 'name') fit the following mold:
+
+*chapter data atom - UTF16 string entries* offset 	field 	size 	value
+0 	size 	4 	size of the atom and all its children (0x16 + 2*string
+length in characters, e.g. for a 8 char string this is 0x26)
+4 	atom name 	4 	the name of the atom
+8 	unknown 	4 	always 1?
+12 	unk1 	4 	always 0? (child count)
+16 	unk2 	4 	always 0?
+20 	string length 	2 	string length in characters
+22 	string 	length *2 	UTF16 string, 2 bytes per character
+
+
+          Chapter Data String Atoms (UTF8)
+
+UTF8 entries fit the following mold:
+
+*chapter data atom - UTF8 string entries* offset 	field 	size 	value
+0 	size 	4 	size of the atom and all its children
+4 	atom name 	4 	the name of the atom
+8 	unknown 	4 	always 1?
+12 	unknown 	4 	varies.. some kind of type?
+16 	null 	8 	zeros
+24 	string 	size - 24 	UTF8 string, 1 byte per character
+
+
+          Chapter Data hedr Atom
+
+*chapter data atom - hedr* offset 	field 	size 	value
+0 	size 	4 	size of the atom, 0x1c
+4 	atom name 	4 	the name of the atom, 'hedr'
+8 	unk1	4 	always 1?
+12 	number of childs 	4 	the number of childs, always 0
+16 	unk2 	4 	always 0
+20 	unk3 	4 	always 0
+24 	unk4 	4 	always 1
+
+
+        Smart Playlist Data (type 50)
+
+A slightly more complex MHOD. These are any MHOD with a "type" that is 50.
+
+This MHOD defines the stuff in the Smart playlist that is not the
+"rules". Basically all the checkboxes and such. It's pretty
+straightforward.
+
+*mhod format - Smart Playlist Data (type 50)* offset 	field 	size 	value
+0 	header identifier 	4 	mhod
+4 	header length 	4 	size of the mhod header.
+8 	total length 	4 	total length of the mhod
+12 	type 	4 	the type indicator ( 50 )
+16 	unk1 	4 	unknown
+20 	unk2 	4 	unknown
+24 	live update 	1 	Live Update flag. 0x01 = on, 0x00 = off
+25 	check rules 	1 	Rules enable flag. 0x01 = on, 0x00 = off. When this
+is enabled, Rules from the type 51 MHOD will be used.
+26 	check limits 	1 	Limits enable flag. 0x01 = on, 0x00 = off. When
+this is enabled, Limits listed below will actually be used.
+27 	limit type 	1 	Limit Type. See below for the list of limit types.
+28 	limit sort 	1 	Limit Sort. See below for the list of limit sorting
+types.
+29 	unknown 	3 	always zero bytes
+32 	limit value 	4 	The actual value used for the limit
+36 	match checked only 	1 	match checked only flag, 0x01 = on, 0x00 =
+off. When this is enabled, only songs marked as "checked" will be
+matched. Checked is a field in the mhit.
+37 	reverse limit sort 	1 	Reverse the Limit Sort flag. 0x01 = on, 0x00
+= off. When this is enabled, the sort will be reversed. More on this below.
+the mhod IS zero padded at the end (58 null bytes)
+
+*Limit Types* value 	description
+1	Minutes
+2	Megabytes
+3	Songs
+4	Hours
+5	Gigabytes
+
+*Limit Sort Types* value 	description
+0x02	Random
+0x03	Song Name (alphabetical)
+0x04	Album (alphabetical)
+0x05	Artist (alphabetical)
+0x07	Genre (alphabetical)
+0x10	Most Recently Added
+0x14	Most Often Played
+0x15	Most Recently Played
+0x17	Highest Rating
+
+When the Reverse Limit Sort flag is set, the sort will be reversed. So
+most recently added becomes least recently added, and highest rating
+becomes lowest rating, and so on. It's just reversing the sorted list
+before applying the limit to it.
+
+
+        Smart Playlist Rules (type 51)
+
+The most complex (and annoying) MHOD. These are any MHOD with a "type"
+that is 51.
+
+This MHOD defines all the rules in the Smart Playlist. It is not
+straightforward at all. In fact, I have to break it down into subtypes
+itself.
+
+If you've used iTunes, you know what a rule looks like. "Rating is less
+than 3 stars", for example. The rule consists of three parts.
+
+The first part is the "field". In our example, the field is "Rating".
+It's the very first thing in the rule and the first pull down box in
+iTunes. Simple enough.
+
+The second part is the "action". In our example, the action is "is less
+than". In iTunes, it's the second pull down box. Also pretty simple.
+
+The final part is the "value". In our example, it'd be "3 stars". Since
+stars are always multiplied by 20 for whatever reason, it'd be "60" for
+our example, in the iTunesDB file.
+
+We'll cover these one at a time.
+
+
+          Important Note about endian-ness
+
+Smart Playlist Rules MHODs are NOT wholly little-endian. Everything
+after the "SLst" to the end of the MHOD is big-endian. This is important
+to remember, especially when dealing with the Action types.
+
+
+          Smart Playlist Rule Fields
+
+Fields are easy. Much more so than Actions. The "expected comparison"
+column will make more sense when you see the Values explained below.
+
+*Smart Playlist Rule Field Types* value 	description 	expected comparison
+0x02	Song Name	String
+0x03	Album	String
+0x04	Artist	String
+0x05	Bitrate	Integer
+0x06	Sample Rate	Integer
+0x07	Year	Integer
+0x08	Genre	String
+0x09	Kind	String
+0x0a	Date Modified	Timestamp
+0x0b	Track Number	Integer
+0x0c	Size	Integer
+0x0d	Time	Integer
+0x0e	Comment	String
+0x10	Date Added	Timestamp
+0x12	Composer	String
+0x16	Play Count	Integer
+0x17	Last Played	Timestamp
+0x18	Disc Number	Integer
+0x19	Stars/Rating	Integer (multiply by 20 for stars/rating)
+0x1f	Compilation	Integer
+0x23	BPM	Integer
+0x27	Grouping	String (see special note)
+0x28	Playlist	Integer - the playlist ID number (see special note)
+0x36	Description	String
+0x37	Category	String
+0x39	Podcast	Integer
+0x3c	Video Kind	Logic integer, works on mediatype
+0x3e	TV Show	String
+0x3f	Season Nr	Integer
+0x44	Skip Count	Integer
+0x45	Last Skipped	Timestamp
+0x47	Album Artist	String
+
+Special Note about Grouping and Playlist fields - They don't work with
+Live Updating on 3rd gen iPods, yet. This might get fixed in a future
+firmware release. Maybe.
+
+
+          Smart Playlist Rule Actions
+
+The Action type is a 4 byte field. It is a bitmapped value, meaning that
+each bit of these four bytes has a different meaning.
+
+*Smart Playlist Rule Action High Byte* bit 	description
+0	The action is referring to a string value if set, not a string if not set
+1	NOT flag. If set, this negates the rule. Is becomes is not, contains
+becomes does not contain, and so forth.
+
+*Smart Playlist Rule Action Low 2 bytes* bit 	description
+0	Simple "IS" query
+1	Contains
+2	Begins with
+3	Ends with
+4	Greater Than
+5	Greater Than or Equal To
+6	Less Than
+7	Less Than or Equal To
+8	Is in the Range
+9	In the Last
+10	Is / Is Not (binary AND, only used for "Video Kind" so far)
+
+This is complicated, obviously, and iTunes abstracts this all by
+defining various actions for various fields. Here's the complete
+possible list of actions, including those that iTunes does not have but
+which still work on the iPod:
+
+*Smart Playlist Rule Actions* value 	action
+0x00000001	Is Int (also Is Set in iTunes)
+0x00000010	Is Greater Than (also Is After in iTunes)
+0x00000020	Is Greater Than Or Equal To (not in iTunes)
+0x00000040	Is Less Than (also Is Before in iTunes)
+0x00000080	Is Less Than Or Equal To (not in iTunes)
+0x00000100	Is in the Range
+0x00000200	Is in the Last
+0x00000400	Is / Is Not (Binary AND, used for media type so far)
+0x01000001	Is String
+0x01000002	Contains
+0x01000004	Starts With
+0x01000008	Ends With
+0x02000001	Is Not Int (also Is Not Set in iTunes)
+0x02000010	Is Not Greater Than (not in iTunes)
+0x02000020	Is Not Greater Than Or Equal To (not in iTunes)
+0x02000040	Is Not Less Than (not in iTunes)
+0x02000080	Is Not Less Than Or Equal To (not in iTunes)
+0x02000100	Is Not In the Range (not in iTunes)
+0x02000200	Is Not In The Last
+0x03000001	Is Not
+0x03000002	Does Not Contain
+0x03000004	Does Not Start With (not in iTunes)
+0x03000008	Does Not End With (not in iTunes)
+
+
+          Smart Playlist Rule Values
+
+Values are generally pretty straightforward. For String rules, it's a
+string. For Integer and Timestamp rules, it's a bit more complicated.
+Furthermore, the "In the Last" type action requires a Units value as well.
+
+So there are two major rule formats, the String Rule and the Non-String
+Rule.
+
+*SPLRule String format* offset 	field 	size 	value
+0 	field 	4 	The Field type
+4 	action 	4 	The Action type
+8 	padding 	44 	zero padding
+52 	length 	4 	length of the string, in bytes. Maximum length is 255
+56 	string 	length 	the string in UTF-16 format (2 bytes per character)
+rules are NOT zero padded at the end
+
+*SPLRule Non-String format* offset 	field 	size 	value
+0 	field 	4 	The Field type
+4 	action 	4 	The Action type
+8 	padding 	44 	zero padding
+52 	length 	4 	always 0x44 for non-string types
+56 	from value 	8 	the from value in an 8 byte form (unsigned int64)
+64 	from date 	8 	the from date in an 8 byte form (signed int64)
+72 	from units 	8 	the from units in an 8 byte form (unsigned int64)
+80 	to value 	8 	the to value in an 8 byte form (unsigned int64)
+88 	to date 	8 	the to date in an 8 byte form (signed int64)
+96 	to units 	8 	the to units in an 8 byte form (unsigned int64)
+104 	unknown 	20 	unknown, used by all field types, unknown purpose
+rules are NOT zero padded at the end
+
+For integer type rules, the from and to values are the ones that you
+care about, the date = 0, and the units = 1.
+
+Example: BPM is less than 150
+field = 0x23 (BPM)
+action = 0x00000040 (is less than)
+from and to value = 150
+from and to date = 0
+from and to units = 1
+
+Example: BPM is in the range 70 to 150
+field = 0x23 (BPM)
+action = 0x00000100 (is in the range)
+from value = 70
+to value = 150
+from and to date = 0
+from and to units = 1
+
+For binary and type rules, the from and to values are the ones that you
+care about, the date = 0, and the units = 1.
+
+Example: Video Kind is TV-Show
+field = 0x3c (Video Kind)
+action = 0x00000400 (Is / Is Not)
+from and to value = 0x0040
+from and to date = 0
+from and to units = 1
+
+Example: Video Kind is not TV-Show
+field = 0x3c (Video Kind / mediatype)
+action = 0x00000400 (Is / Is Not)
+from and to value = 0x0e22
+from and to date = 0
+from and to units = 1
+
+For the latter one would expect a value of 0x0022 (either Movie or Music
+Video). The additional 0x0e00 in the mask hints for further video types
+to come.
+
+Timestamp type rules use the same format as integer type rules, only the
+from and to values are Mac timestamps. This is the number of seconds
+since 1/1/1904.
+
+Example: Date Added is in the range 6/19/2004 to 6/20/2004
+field = 0x10 (Date Added)
+action = 0x00000100 (is in the range)
+from value = bcfa83ff (6/19/2004)
+to value = 0xbcfbd57f (6/20/2004)
+from and to date = 0
+from and to units = 1
+
+For "in the last" type rules, the from and to values are set to a
+constant of 0x2dae2dae2dae2dae. The from dates become the value, and the
+from units becomes the unit you're measuring in. The way to think of
+this is that it's saying "Today (2dae) plus this number of units".
+
+Example: Last Played Time is in the last 2 weeks.
+field = 0x17 (Last Played Time)
+action = 0x00000200 (is in the last)
+from value = 0x2dae2dae2dae2dae
+from date = -2
+from units = 604800 (number of seconds in a week)
+to value = 0x2dae2dae2dae2dae
+to date = 0
+to units = 1
+
+That rule is saying "Today minus 2 times this number of seconds" which
+is 2 weeks before "now", whatever now happens to be.
+
+If you're creating your own rules in an iTunesDB, you may find it more
+convienent to leave the units set to "1" all the time and just put the
+number of seconds into the date field. This is perfectly acceptable and
+the iPod can handle it just fine. If you're not sure how to make a
+particular rule, create it or a similar one in iTunes and put it on the
+iPod, then examine the iTunesDB file to see how it did it.
+
+
+But if you're programming the iPod side of things, you need to be able
+to correctly understand the units field and deal with it accordingly.
+The best way to do this is to always compare the contents of the field
+in question with (value+date*unit), and replacing the "value" with the
+current timestamp ("now") when it is equal to 3,291,618,603,768,360,366
+(0x2dae2dae2dae2dae). This will work for *all* integer and timestamp
+comparisons if done correctly. It's also exactly what the Apple iPod
+firmware does. It's also why you have to set the time/date on an iPod
+for these smart playlists to work correctly (3rd gen and up).
+
+Also, remember that all timestamps should be dealt with in Apple format,
+which is the number of seconds since 1/1/1904.
+
+
+          Putting It All Together
+
+So, now you know how to create a given rule. All that's left is to put
+all the rules together and shove them into a type 51 MHOD.
+
+*mhod format - Smart Playlist Rules (type 51)* offset 	field 	size 	value
+0 	header identifier 	4 	mhod
+4 	header length 	4 	size of the mhod header.
+8 	total length 	4 	size of the header and the rules it contains
+12 	type 	4 	the type indicator ( 51 )
+16 	unk1 	4 	unknown
+20 	unk2 	4 	unknown
+24 	smart list rules identifier 	4 	"SLst" (note that this is the point
+at which bytes are no longer little-endian in the mhod.. it switches to
+big-endian at this point)
+28 	unk5 	4 	unknown
+32 	number of rules 	4 	number of rules
+36 	rules operator 	4 	0 = AND (as in "Match All"), 1 = OR (as in "Match
+Any")
+40 	padding 	120 	zero padding
+160 	rules 	whatever size the rules are 	the rules themselves, one after
+another.
+the mhod is NOT is zero padded at the end
+
+
+        Library Playlist Index (type 52)
+
+The type 52 MHOD is only found as a child of the Main Library Playlist.
+It is an index of the mhit's ordered by the major categories in the
+Browse menu. The purpose of these mhod's is to speed up the operation of
+the Browse menu itself. This is how it displays the information so
+quickly when selecting one of the major categories, it's all presorted
+for the iPod in these MHOD's.
+
+Note that this MHOD is not mandatory, however the iPod menu system will
+operate much slower without it (on large libraries), as it will have to
+build the information provided here on the fly. Therefore it is
+recommended to build this MHOD for anything more than trivial numbers of
+songs.
+
+Essentially, every MHIT is numbered from 0 to the total number of
+songs-1. The type 52 MHOD contains a list of these index numbers using
+one of the strings contained in these MHIT's, ordered alphabetically.
+
+To build one of these, take all your songs, order them alphabetically by
+one of these fields, then simply insert the index numbers of the ordered
+songs into the type 52 mhod.
+
+*Library Playlist Index types* type number 	field that it indexes
+0x03 	Title
+0x04 	Album, then Disc/Tracknumber, then Title
+0x05 	Artist, then Album, then Disc/Tracknumber, then Title
+0x07 	Genre, then Artist, then Album, then Disc/Tracknumber, then Title
+0x12 	Composer, then Title
+0x1d 	Observed with iTunes 7.2, probably sorted by 'Show' first. Someone
+with TV shows on his iPod please fill in the secondary sort orders.
+0x1e 	Observed with iTunes 7.2, probably sorted by 'Season Number'
+first. Someone with TV shows on his iPod please fill in the secondary
+sort orders.
+0x1f 	Observed with iTunes 7.2, probably sorted by 'Episode Number'
+first. Someone with TV shows on his iPod please fill in the secondary
+sort orders.
+0x23 	Observed with iTunes 7.3 (but may possibly exist in earlier
+versions, too), unknown what this does.
+0x24 	Observed with iTunes 7.3 (but may possibly exist in earlier
+versions, too), unknown what this does.
+
+(Note that the above list roughly matches the limit sort list.. I think
+that these lists are actually the same in some way.)
+
+*mhod format - Library Playlist Index (type 52)* offset 	field 	size 	value
+0 	header identifier 	4 	mhod
+4 	header length 	4 	size of the mhod header.
+8 	total length 	4 	size of the header and all the index entries
+12 	type 	4 	the type indicator ( 52 )
+16 	unk1 	4 	unknown (always zero)
+20 	unk2 	4 	unknown (always zero)
+24 	index type 	4 	what this index is sorted on (see list above)
+28 	count 	4 	number of entries. Always the same as the number of
+entries in the playlist, which is the same as the number of songs on the
+iPod.
+32 	null padding 	40 	lots of padding
+72 	index entries 	4 * count 	The index entries themselves. This is an
+index into the mhit list, in order, starting from 0 for the first mhit.
+the mhod is NOT zero padded at the end
+
+
+        Type 53
+
+The type 53 MHOD is only found as a child of the Main Library Playlist.
+
+*mhod format - Letter jump table for fast scrolling (type 53)* offset
+field 	size 	value
+0 	header identifier 	4 	mhod
+4 	header length 	4 	size of the mhod header.
+8 	total length 	4 	size of the header and all the index entries
+12 	type 	4 	the type indicator ( 53 )
+16 	unk1 	4 	unknown (always zero)
+20 	unk2 	4 	unknown (always zero)
+24 	index type 	4 	what this index is sorted on (see list above)
+28 	count 	4 	number of entries. Unused letters are left out and umlauts
+(at least German ones) are added after the letter they are derived from.
+Don't yet know about the order of the French accented letters.
+32 	null padding 	8 	lots of padding
+40 	index entries 	12 * count 	The index entries themselves.
+the mhod is NOT zero padded at the end
+
+
+*Letter jump table entry* offset 	field 	size 	value
+0 	letter 	4 	The letter of this table entry. Looks like uppercase
+UTF-16LE with 2 padding null bytes (i.e. A would be 0x00000041 little
+endian / 0x41000000 big endian)
+4 	header length 	4 	the number of the first entry in the corresponding
+MHOD52 index starting with this letter. Zero-based and incremented by
+one for each entry, not 4.
+8 	total length 	4 	the count of entries starting with this letter in
+the corresponding MHOD52.
+
+
+I don't know how these are associated with the corresponding MHOD52s, I
+would guess by the sort order field, but I'm not sure because they
+always turn up immediately after their MHOD52. Could someone please have
+a look at this and the other yet unknown things above?
+
+
+        Type 100
+
+There are a couple forms of Type 100 MHOD's (that we know of).
+
+The first form is at the beginning of every playlist (before any MHIP
+entries). Only iTunes puts it there, and only iTunes uses it. It
+contains information on what columns to display, and what size to
+display them as, when displaying the playlist in iTunes when the iPod is
+in a manual mode. This is absolutely optional. The iPod itself doesn't
+appear to use it in any way.
+
+The second form is after every MHIP in a playlist, there's a small type
+100 MHOD. It gives an order number to the song immediately before it. It
+is not optional, but it's also not particularly useful.
+
+
+          Playlist Column Definitions Header
+
+*mhod format - Playlist Column Definition (type 100)* offset 	field
+size 	value
+0 	header identifier 	4 	mhod
+4 	header length 	4 	size of the mhod header. This is always 0x18 for
+this type of MHOD.
+8 	total length 	4 	size of the header and it's data. This is always
+0x288 for this type of MHOD.
+12 	type 	4 	the type indicator ( 100 )
+16 	unk1 	4 	unknown, always 0
+20 	unk2 	4 	unknown, always 0
+24 	unk3 	4 	unknown, always 0
+28 	unk4 	8 	unknown, appears to be 0x0088004A02EF0281 for everything
+except normal playlists. Some kind of identifier?
+36 	unk8 	4 	unknown, always 0
+40 	unk9 	2 	unknown, appears to be 130 for normal playlists and 200 for
+everything else
+42 	unk10 	2 	unknown, appears to be 3 for the iPod library and 1 for
+everything else
+44 	sort type 	4 	the sort type for this playlist. Use this value to
+figure out which column is selected by mapping it to the correct column
+ID (listed below).
+48 	number of columns 	4 	the number of columns visible in iTunes for
+this playlist. In iTunes 6, this value can be anywhere from 2 to 28.
+52 	unknown1 	2 	unknown (always 1?) (Selected column?)
+54 	unknown2 	2 	unknown (always 0?) (Column sort direction? asc/desc)
+56 	column definitions 	16 * number of columns 	the column definitions
+after the column definitions, the rest of the MHOD is zero-padded
+
+
+          Column Definition
+
+Each column definition only consists of an ID for the playlist and the
+sort direction for the column. The order they appear in this MHOD are
+the order they appear in iTunes, from left to right. The first two
+columns are always song position and title, in that order.
+
+*Single Column Definition* offset 	field 	size 	value
+0 	ID 	2 	the ID for this column, see below for possible values
+2 	width 	2 	the width of the column, in pixels
+4 	sort direction 	4 	if equal to 0x1, the sort is reversed for this
+column. Set to 0x0 otherwise.
+8 	unknown 	4 	seems to be null padding
+12 	unknown 	4 	seems to be null padding
+
+*Column IDs* ID 	description
+0x01 	position; leftmost column in all playlists
+0x02 	Name
+0x03 	Album
+0x04 	Artist
+0x05 	Bit Rate
+0x06 	Sample Rate
+0x07 	Year
+0x08 	Genre
+0x09 	Kind
+0x0A 	Date Modified
+0x0B 	Track Number
+0x0C 	Size
+0x0D 	Time
+0x0E 	Comment
+0x10 	Date Added
+0x11 	Equalizer
+0x12 	Composer
+0x14 	Play Count
+0x15 	Last Played
+0x16 	Disc Number
+0x17 	My Rating
+0x19 	Date Released (Podcasts group only)
+0x1A 	BPM
+0x1C 	Grouping
+0x1E 	Category
+0x1F 	Description
+0x21 	Show
+0x22 	Season
+0x23 	Episode Number
+
+
+          Playlist Order Entry
+
+*mhod format - Playlist Order Entry (type 100)* offset 	field 	size 	value
+0 	header identifier 	4 	mhod
+4 	header length 	4 	size of the mhod header. This is always 0x18 for
+this type of MHOD.
+8 	total length 	4 	size of the header and it's data. This is always
+0x2C for this type of MHOD.
+12 	type 	4 	the type indicator ( 100 )
+16 	unk1 	4 	unknown, always 0
+20 	unk2 	4 	unknown, always 0
+24 	position 	4 	Position of the song in the playlist. These numbers do
+not have to be sequentially ordered, numbers can be skipped.
+28 	unknown 	16 	zero padding
+
+
+      Album List
+
+Album List, first seen with iTunes 7.1. It was seen on iPod nano 2nd gen
+and Shuffle 2nd gen restored with iTunes 7.1.1, but not on iPod Video
+30GB(restored with the same version of iTunes).
+
+*mhla format* offset 	field 	size 	value
+0 	header identifier 	4 	mhla
+4 	header length 	4 	size of the mhla header
+8 	number of album items	4 	the total number of songs in the Album List
+rest of header is zero padded
+
+The Album List has Album Items as its children. The number of Album
+Items is the same all albums on iPod.
+
+
+      Album Item
+
+*mhia format* offset 	field 	size 	value
+0 	header identifier 	4 	mhia
+4 	header length 	4 	size of the mhia header. Length is 0x58
+8 	total length 	4 	size of the header and all child records
+12 	number of strings 	4 	number of strings (mhods) that are children of
+this mhia
+16 	unknown 	2 	(previously long length 4 with possibly album ID)
+18 	album id for track 	2 	album ID (v. 0x18 file) (previously long
+length 4)
+20 	unknown 	8 	timestamp? (v. 0x18 file)
+28 	unknown 	4 	always 2? (v. 0x18 file)
+
+Usually mhia has two child strings: album title and artist name.
+
+
+→ Subpage: Play Counts File
+
+
+    Play Counts file
+
+The play count information, since the last sync with iTunes, is stored
+in the "Play Counts" file.
+
+The play counts file is deleted by the iPod and rebuilt whenever it
+detects that the iTunesDB file has changed (immediately after a sync).
+So writing anything into this file yourself is more than a little
+pointless, as the iPod simply will overwrite it. This is the iPod's way
+of sending information back to iTunes (or whatever program you happen to
+sync with).
+
+When iTunes syncs, the first thing it does is read the values that the
+iPod has put into this file, and merges them back into the iTunes Library.
+
+
+      Play Count Header
+
+The play count header indicates a valid play count file and specifies
+how many entries follow and the size of each entry record. The is an
+entry record for each song on the iPod; the entry position corresponding
+to the position of the song in the iTunesDB.
+
+*Play Count Header* offset 	field 	size 	value
+0 	header identifier 	4 	mhdp
+4 	header length 	4 	0x60
+8 	single entry length 	4 	0x0c (firmware 1.3), 0x10 (firmware 2.0),
+0x14 (with version 0x0d of iTunesDB), 0x1C (with version 0x13 of iTunesDB)
+12 	number of entries 	4 	number of songs on iPod
+rest of header is zero padded
+
+
+      Play Count Entry
+
+The entry record contains the play count data for each song, one record
+exists for each song on the iPod.
+
+*Play Count Entry* offset 	field 	size 	value
+0 	play count 	4 	number of played times since last sync
+4 	last played 	4 	last played time. Set to zero in older firmwares, or
+to the value from iTunesDB in newer ones (anything with the "Music" menu).
+8 	audio bookmark 	4 	position in file that the song was last paused/
+stopped at, in milliseconds. This works for audiobooks, podcasts, and
+seemingly anything else with the right bit set in the MHIT (unk19).
+12 	rating 	4 	Rating given to song. Number of stars (1-5) * 0x14. Set
+to zero in older firmwares, or to the value from iTunesDB in newer ones
+(anything with the "Music" menu).
+16 	unknown 	4 	Unknown, yet. Probably something to do with podcast
+bookmarking or some such.
+20 	skip count 	4 	Number of times skipped since last sync. This field
+appears with firmware that supports the 0x13 version iTunesDB.
+24 	last skipped 	4 	Last skipped date/time. Set to zero if never
+skipped. This field appears with firmware that supports the 0x13 version
+iTunesDB.
+
+Older firmware versions had set the last played time and the rating to
+"zero" in this database, unless you changed either one on the iPod
+itself. Thus you could ignore zero entries.
+
+Newer firmwares, however, set last played time and rating to be the same
+as what is in the iTunesDB file, by default. Meaning that you can't
+ignore zero entries for rating anymore (somebody could set the rating to
+a zero rating on the iPod). So you must compare the rating in Play
+Counts and the rating in iTunesDB to determine if it has actually
+changed and you need to update it on the PC (in a program on the PC that
+talks to the iPod that is).
+
+
+→ Subpage: OTG Playlist File
+
+
+    On The Go Playlist files
+
+*mhpo format* offset 	field 	size 	value
+0 	header identifier 	4 	mhpo
+4 	file size 	4 	the header length, always 20 on my 4gen iPod
+8 	unk1 	4 	unknown, appears to always be 0 (on my 4gen iPod it seems to
+be always 4)
+12 	tracks 	4 	number of tracks in this OTG playlist
+16 	unk2 	4 	unknown, appears to always be 0 (on my 4gen iPod it is a
+fixed number, and the OTG file will not work if this number is 0)
+20 	track index number 	4 * tracks 	This is a list of the tracks in the
+playlist, one after another. The number is a zero based index into the
+Track List (MHLT) in the iTunesDB file. So the first track in the MHLT
+would be 0, the second would be 1, and so forth.
+
+Because the OTG Playlist uses track indexes, it is only valid until the
+next time the iTunesDB changes. This means that you should read any
+OTGPlaylist files on a sync and create proper Playlists for them in the
+iTunesDB file or do something else with them. After you change the
+iTunesDB file, they won't be valid anymore.
+
+iTunes handles this by deleting the files once they are read, during an
+autosync. Apple's iPod firmware also deletes these files if the iTunesDB
+changes and it detects it, after you undock the iPod. iTunes will read
+them and create real playlists from them before it syncs anything. Note
+that in any sync operation, this *must* occur before the iTunesDB
+changes, otherwise you'll lose the playlist.
+
+
+→ Subpage: Equalizer Presets File
+
+
+    Equalizer Presets file
+
+The EQPresets file consists of a Presets Container to specify the number
+of EQPresets in the file, and then a series of EQ Presets as its children.
+
+
+      Equalizer Presets Container
+
+*mqed format* field 	size 	value
+header identifier 	4 	mqed
+header size 	4 	the size of the mqed header
+unk1 	4 	unknown
+unk2 	4 	unknown
+number of presets 	4 	the number of presets defined in this file
+childsize 	4 	the size of an individual preset in bytes. Always 588,
+thus far.
+rest of header is zero padded
+
+
+      Equalizer Preset
+
+Each EQ Preset contains two actual presets. The first one is the
+representation you see in iTunes - a 10 band Equalizer. iTunes actually
+displays the given bands slightly wrong. The real values it uses are:
+32Hz, 64Hz, 128Hz, 256Hz, 512Hz, 1024Hz, 2048Hz, 4096Hz, 8192Hz, 16384Hz
+
+The EQ Preset also contains a 5 band version of the exact same preset.
+The algorithim it uses to determine this from the 10 band preset is not
+known, but you can assume it uses some form of curve fitting method. In
+any case, the 5 band version would be the EQ setting that the iPod
+actually would use, if it actually read and used this file as it
+obviously was supposed to do. The reason for this is that the iPod's
+audio DSP is capable of applying a 5 band EQ directly.
+
+*pqed format* field 	size 	value
+header identifier 	4 	pqed
+length of preset name 	2 	the length, in bytes, of the name of the preset
+name 	510 	The name of the preset, padded with nulls at the end. This is
+always 510 bytes long.
+preamp 	4 	The preamp value. Possible values are from -1200 to 1200,
+measured as dB * 100. This is a signed long.
+number of bands 	4 	number of bands in the preset. This is always 10.
+band values 	40 	10 bands of values, each a signed long from -1200 to
+1200 (measured as dB * 100)
+number of bands 2 	4 	number of bands in the second representation. This
+is always 5.
+band values 2 	20 	5 bands of values, each a signed long from -1200 to
+1200 (measured as dB * 100)
+rest of pqed is NOT zero padded
+
+
+→ Subpage: Artwork Database
+
+
+    Artwork Database
+
+The ArtworkDB file is only found on iPod Photos. It is created by iTunes
+4.7 and up. This file, along with the thumbnail files iTunes creates,
+are what allows photos and album art to be displayed on the iPod Photo.
+
+The Photo Database file is similar to the ArtworkDB file. The Photo
+Database stores photos you add manually, the ArtworkDB stores album
+artwork for displaying when playing music.
+
+-Images are concatenated into *.ithmb files (thumbnails, basically).
+
+-Large thumbnails are stored separately from small thumbnails.
+
+-Large thumbnails are 140x140, small thumbnails are 56x56 - raw RGB565
+packed color binary streams (bytes are swapped, little endian).
+
+ArtworkDB Database layout:
+
+<mhfd>
+ <mhsd> (index = 1)
+   <mhli>
+     <mhii>
+       <mhod> (type = 2) Info about full size thumbnail
+         <mhni>
+           <mhod> (type = 3)
+       <mhod> (type = 2) Info about 'now playing' thumbnail
+         <mhni>
+           <mhod> (type = 3)
+     <mhii>
+       <mhod> (type = 2)
+         <mhni>
+           <mhod> (type = 3)
+       <mhod> (type = 2)
+         <mhni>
+           <mhod> (type = 3)
+      ...
+ <mhsd> (index = 2)
+   <mhla>
+ <mhsd> (index = 3)
+   <mhlf>
+     <mhif>
+     <mhif>
+     ...
+
+
+→ Subpage: Photo Database
+
+
+    Photo Database
+
+The Photo Database is created by iTunes, and is stored in "/Photos/Photo
+Database". The Photo Database looks similar to the ArtworkDB but has
+additional entries in the mhla object (mhba and mhia, see below) as well
+as different Thumbnails. The mhiis in the Photo Database look like this
+for example:
+
+mhii (children: 5, id: 117, srcimgsize: 0)
+  mhod (type: 5)
+    mhni (children: 1, corrid: 1, ithmb offset: 0, imgsize: 1567395, imgdim: 0x0)
+      mhod (type: 3, length: 80, string: u':Full Resolution:2005:08:06:simg3609.jpg')
+  mhod (type: 2)
+    mhni (children: 1, corrid: 1019, ithmb offset: 7603200, imgsize: 691200, imgdim: 0x2c801e0)
+      mhod (type: 33554435, length: 42, string: u':Thumbs:F1019_1.ithmb')
+  mhod (type: 2)
+    mhni (children: 1, corrid: 1020, ithmb offset: 851840, imgsize: 77440, imgdim: 0xa500e1)
+      mhod (type: 33554435, length: 42, string: u':Thumbs:F1020_1.ithmb')
+  mhod (type: 2)
+    mhni (children: 1, corrid: 1009, ithmb offset: 27720, imgsize: 2520, imgdim: 0x29001f)
+      mhod (type: 33554435, length: 42, string: u':Thumbs:F1009_1.ithmb')
+  mhod (type: 2)
+    mhni (children: 1, corrid: 1015, ithmb offset: 251680, imgsize: 22880, imgdim: 0x7b0058)
+      mhod (type: 33554435, length: 42, string: u':Thumbs:F1015_1.ithmb')
+
+The type 5 mhod references the full resolution image and is probably
+only there if the corresponding check box in iTunes was checked. The
+type 2 mhods reference different types of thumbnail versions:
+
+ 1. The first thumbnail (imgdim: 0x2c801e0, which decodes as 712x480) is
+    of dimension 720x480 and in YUV 4:2:2 format, interlaced. It
+    consists of two half-frames concatenated together. This is probably
+    used for the TV-out (dimension, color format and interlacing look
+    like NTSC).
+ 2. The second thumbnail (imgdim: 0xa500e1, which decodes as 165x225) is
+    of dimension 176x220 and in RGB 565 format, but rotated 90° CCW.
+    This is the image that is actually displayed on the iPod screen.
+ 3. The third thumbnail (imgdim: 0x29001f(41x31)) is 42x30, RGB 565 with
+    swapped bytes (e.g. it's more like GBRG 3553). This is the image
+    that is used as a thumbnail.
+ 4. The fourth thumbnail (imgdim: 0x7b0058(123x88)) is 130x88, RGB 565
+    with swapped bytes
+
+There is a *.ithmb file per resolution (in the directory "/Photos/
+Thumbs/"), that concatenates all thumbnails with that resolution.
+
+On an iPod video (5G) there are 4 different thumbnails type:
+
+ 1. 720x480 interlaced UYVY (YUV 4:2:2) - used for TV output - 691200
+    bytes each single thumbnail
+ 2. 320x240 byte swapped RGB565 - used for fullscreen on the iPod -
+    153600 bytes each single thumbnail
+ 3. 130x88 byte swapped RGB565 - used on the iPod during slideshow, when
+    current photo is displayed on TV - 22880 bytes each single thumbnail
+ 4. 50x41 byte swapped RGB565 - used on the iPod when listing and during
+    slideshow - 4100 bytes each single thumbnail
+
+Dimensions of the fields in the /Photo Database/ are very important.
+Only one total length field or one padding field with wrong value could
+be enough to make the Photo Database file completely unusable: then
+nothing will be displayed on the iPod, no photo albums, no photos.
+
+Here follows a complete structure for a Photo Database file working on
+an iPod video 5G:
+
+ 'mhfd', 132, 1384, 0, 1, 3, 0, 102, 0, 0, 0, 0, 2, 0, 0, 0, 0
+ 'mhsd', 96, 1276, 1
+ 'mhli', 92, 1
+ 'mhii', 152, 1088, 5, 100, 102, 0, 0, 0, 0, 3221487006, 3221487006, 0
+ 'mhod', 24, 216, 5, 0, 0
+ 'mhni', 76, 192, 1, 1, 0, 0, 0, 0, 0, 0
+ 'mhod', 24, 116, 3, 0, 2
+ 78, 2, 0, ':Full Resolution:2006:01:22:DSC00090.JPG'
+ 'mhod', 24, 180, 2, 0, 0
+ 'mhni', 76, 156, 1, 1019, 0, 691200, 0, 0, 480, 712
+ 'mhod', 24, 80, 3, 0, 2
+ 42, 2, 0, ':Thumbs:F1019_1.ithmb'
+ 'mhod', 24, 180, 2, 0, 0
+ 'mhni', 76, 156, 1, 1024, 0, 153600, 0, 0, 240, 320
+ 'mhod', 24, 80, 3, 0, 2
+ 42, 2, 0, ':Thumbs:F1024_1.ithmb'
+ 'mhod', 24, 180, 2, 0, 0
+ 'mhni', 76, 156, 1, 1015, 0, 22880, 0, 0, 88, 123
+ 'mhod', 24, 80, 3, 0, 2
+ 42, 2, 0, ':Thumbs:F1015_1.ithmb'
+ 'mhod', 24, 180, 2, 0, 0
+ 'mhni', 76, 156, 1, 1036, 0, 4100, 0, 0, 41, 53
+ 'mhod', 24, 80, 3, 0, 2
+ 42, 2, 0, ':Thumbs:F1036_1.ithmb'
+ 'mhsd', 96, 660, 2
+ 'mhla', 92, 2
+ 'mhba', 148, 232, 1, 1, 101, 0, 65536, 0, 0, 0, 0, 0, 0, 0, 100
+ 'mhod', 24, 44, 1, 0, 1
+ 7, 1, 0, 'Library'
+ 'mhia', 40, 40, 0, 100
+ 'mhba', 148, 240, 1, 1, 102, 0, 393216, 0, 0, 0, 0, 0, 0, 0, 101
+ 'mhod', 24, 52, 1, 0, 3
+ 13, 1, 0, 'A Photo Album'
+ 'mhia', 40, 40, 0, 100
+ 'mhsd', 96, 684, 3
+ 'mhlf', 92, 4
+ 'mhif', 124, 124, 0, 1019, 691200
+ 'mhif', 124, 124, 0, 1015, 22880
+ 'mhif', 124, 124, 0, 1024, 153600
+ 'mhif', 124, 124, 0, 1036, 4100
+
+
+      Data File Object
+
+*mhfd format* offset 	field 	size 	value
+0	header identifier 	4 	mhfd
+4	header length 	4 	size of the mhfd header (0x84)
+8	total length 	4 	size of the header and all child records (since
+everything is a child of MHFD, this will always be the size of the
+entire file)
+12	unknown1 	4 	always seem to be 0
+16	unknown2 	4 	always seem to be 1 for older databases, in an ArtworkDB
+generated by iTunes 4.9 or above, it's 2. Caution: iTunes7 removes the
+whole database if this field is 1
+20	number of children 	4 	always 3 since there are 3 list holders
+24	unknown3 	4 	always seem to be 0
+28	next id for mhii 	4 	The id of last mhii + 1. (is probably used as
+the id of a newly added mhii and then incremented). On an iPod video
+seems to be the id of the last mhii + the total number of photo albums
+(mhba) + 1.
+32	unknown5 	8
+40	unknown6 	8
+48	unknown7 	4 	always seem to be 2
+52	unknown8 	4 	always seem to be 0
+56	unknown9 	4 	always seem to be 0
+60	unknown10 	4
+64	unknown11 	4
+68	rest of header is zero padded
+
+
+      DataSet
+
+This is basically the same as the MHSD element in the iTunes DB.
+
+*mhsd format* field 	size 	value
+header identifier 	4 	mhsd
+header length 	4 	size of the mhsd header (0x60)
+total length 	4 	size of the header and all child records
+index 	4 	An index number. This value is 1 if the child is an Image
+List, 2 if the child is an Album List, or 3 if it's a File List.
+rest of header is zero padded
+
+Depending on the index, the Data Set either contains an Image List
+(mhli) child, an Album List (mhla) child or a File List child (mhlf).
+
+
+      Image List
+
+*mhli format* field 	size 	value
+header identifier 	4 	mhli
+header length 	4 	size of the mhli header (0x5c)
+number of images 	4 	the total number of images in the Image List
+rest of header is zero padded
+
+The Image List has Image Items as its children. The number of Image
+Items is the same as the number of images.
+
+
+      Image Item
+
+*mhii format* offset 	field 	size 	value
+0	header identifier 	4 	mhii
+4	header length 	4 	size of the mhii header (0x98)
+8	total length 	4 	size of the header and all child records
+12	number of children 	4 	In ArtworkDB there are 2 children: one mhod
+type 2 record for the full sized thumbnail, and one mhod type 2 record
+for the now-playing sized thumbnail. In Photo Database there are: a
+child for every thumbnail type (2 on Nanoes, 4 on Photo/Color/Video
+iPods) + a child for the reference to the full resolution image (if
+chosen to include it). In Photo Database files generated on Macs,
+probably by iPhoto, sometimes there could be an additional child, a
+type-1 string MHOD containing an UTF-8 string of a label for the image,
+usually found as first child just after the MHII header.
+16	id 	4 	First mhii is 0x40, second is 0x41, ... (on mobile phones the
+first mhii appears to be 0x64, second 0x65, ...)
+20	Song ID 	8 	Unique ID corresponding to the 'dbid' field in the
+iTunesDB mhit record, this is used to map ArtworkDB items to iTunesDB
+items.
+28	unknown4 	4 	Seems to always be 0
+32	rating 	4 	Rating from iPhoto * 20
+36	unknown6 	4 	Seems to always be 0
+40	originalDate 	4 	Seems to always be 0 in ArtworkDB; timestamp in
+Photo Database (creation date of file)
+44	digitizedDate 	4 	Seems to always be 0 in ArtworkDB; timestamp in
+Photo Database (date when the picture was taken, probably from EXIF
+information)
+48	source image size 	4 	Size in bytes of the original source image
+rest of header is zero padded
+
+MHOD type 2, Annoyingly, not a string like it is in iTunesDB... but
+still defines location of the file in question, sorta: its mhni child
+record contains everything that is needed about the image file.
+
+header_size = 0x18
+total_size
+type = 2
+unk1 = 0
+unk2 = 0
+
+
+      Image Name
+
+
+*mhni format* offset 	field 	size 	value
+0	header identifier 	4 	mhni
+4	header length 	4 	size of the mhni header (0x4c)
+8	total length 	4 	size of the header and all child records
+12	number of children 	4 	mhni headers have one mhod type 3 child
+16	correlation ID 	4 	corresponds to mhif's correlation id, it's used to
+generate the name of the file containing the image, see below
+20	ithmb offset 	4 	offset where the start of image data can be found in
+the .ithmb file corresponding to this image
+24	image size 	4 	size of the image in bytes
+28	vertical padding 	2 	approximate difference between scaled image
+height and pixmap height (signed)
+30	horizontal padding 	2 	approximate difference between scaled image
+width and pixmap width (signed)
+32	image height 	2 	The height of the image.
+34	image width 	2 	The width of the image.
+36	unknown 	4 	Always zero?
+40	image size 	4 	size of the image in bytes (same as 0x18), written by
+iTunes 7.4
+rest of header is zero padded
+
+The correlation ID gives us the name of the file containing the image.
+For example, if the correlation ID is 1016 in decimal, then the
+corresponding filename will be F1016_1.ithmb.
+
+In general, (vertical padding +image height) ~ pixmap height - usually
+within one or two pixels, probably due to rounding error. For instance,
+on a PhotoPod, an original image with dimensions 1200h x 1600v will have
+an NTSC image with image height=480, image width=558, vertical
+padding=0, and horizontal padding=162, with 558+162 = 720, the actual
+width of the pixel map. For an image scaled to be contained entirely
+within the pixel map, such as the video image or the full-screen image
+the padding values are basically the total width of the black bars.
+
+For the smallest thumbnails, you can have negative values for padding,
+because the pixel map is scaled to be contained /within/ the image - you
+get a central "slice" with no black bars.
+
+As noted, there appear to be some rounding errors when the padding
+values are calculated, as the sums are sometimes off by 1 to 2.
+
+There is no indication in this object what the pixel format, actual
+pixel map dimensions or rotation of images will be, so this must be
+entirely derived from the image size.
+
+Here are the dimensions and formats for all known image sizes:
+
+size	height	width	format	description
+691200	480	720	UYVY	PhotoPod and VideoPod NTSC image
+153600	240	320	RGB565_LE	VideoPod full screen
+80000	200	200	RGB565_LE	VideoPod album art big version
+77440	176	220	RGB565_BE_90	PhotoPod full screen
+46464	132	176	RGB565_BE	Nano full screen
+39200	140	140	RGB565_LE	PhotoPod album art big version
+22880	88	130	RGB565_LE	PhotoPod and VideoPod video preview
+20000	100	100	RGB565_LE	VideoPod album art small version, Nano album art
+big version
+6272	56	56	RGB565_LE	PhotoPod album art small version
+4100	41	50	RGB565_LE	VideoPod list thumbnail
+3528	42	42	RGB565_LE 	Nano album art small version
+3108	37	42	RGB565_LE	Nano list thumbnail
+2520	30	42	RGB565_LE	PhotoPod list thumbnail
+
+where:
+
+  * UYVY is a byte stream where U,Y0,V,Y1 creates two YUV pixels of
+    Y0,U,V and Y1,U,V, interlaced, all even fields, then all odd fields.
+  * RGB565_LE is a stream of byte-swapped 16-bit pixels ordered from
+    top->bottom, left->right
+  * RGB565_BE_90 is a stream of 16-bit pixels ordered right to left, top
+    to bottom
+
+The "full screen" images are rotated because the iPod displays used are
+actually portrait, not landscape, and this format is just a memory dump
+of the frame buffer memory.
+
+
+      Album List
+
+*mhla format* field 	size 	value
+header identifier 	4 	mhla
+header length 	4 	size of the mhla header (0x5c)
+number of children 	4 	the total number of children in the Album List
+(no children in ArtworkDB, 1 or more children in Photo Database)
+rest of header is zero padded
+
+The Album List has no children in the case of the ArtworkDB file, and 1
+or more children for the Photo Database: 1 child for the Photo Library
+and possible some more children for additional photo albums.
+
+For the Photo Database the layout looks like this, for example:
+
+mhsd (type: 2)
+  mhla (children: 3)
+    mhba (number of mhods: 1, number of mhias: 5, unk3: 0x10000)
+      mhod (string: "My Pictures")
+      mhia (image id: 100)
+      mhia (image id: 101)
+      mhia (image id: 102)
+      mhia (image id: 103)
+      mhia (image id: 104)
+    mhba (number of mhods: 1, number of mhias: 2, unk3: 0x60000)
+      mhod (string: "Folder A")
+      mhia (image id: 100)
+      mhia (image id: 101)
+    mhba (number of mhods: 1, number of mhias: 3, unk3: 0x60000)
+      mhod (string: "Folder B")
+      mhia (image id: 102)
+      mhia (image id: 103)
+      mhia (image id: 104)
+
+In this case "My Pictures" was the folder that was selected in iTunes to
+synchronize photos with, and it contained 2 folders "Folder A" and
+"Folder B" with 2 and 3 photos respectively. The iPod will show this on
+its Photo menu as a submenu called "Photo Library" (containing all 5
+photos), a submenu called "Folder A" with the first 2 photos and a
+submenu "Folder B" with the other 3 photos.
+
+Note that the string MHODs are zero-padded to a length that is a
+multiple of 4 so that in the Photo Database all objects start on a 4-
+byte boundary. The iPod won't list any photo or photo album otherwise.
+
+
+      Photo Album
+
+An MHBA allows you to setup an Album of photos (grouping photos together
+in an album). The MHBA is implemented similar to playlist.
+
+These are only supported on models that support photos.
+
+*mhba format* offset 	field 	size 	value
+0	header identifier 	4 	mhba
+4	header length 	4 	size of the mhba header (0x94)
+8	total length 	4 	size of the header and all child records
+12	Data Object Child Count 	4 	number of Data Objects in the List,
+probably always 1. Sometimes seems to be 2 in the new video iPods' Photo
+Database, see below.
+16	Album Item Count 	4 	number of pictures in the album
+20	playlist id 	4 	a unique integer for each playlist - starts out at
+$64 and increments by 1. Really seems to be the total number of pictures
+(MHII) + photo album number (+1 for the first album, +2 for the second,
+etc. etc.)
+24	unk2 	4 	unknown, seems to be always 0
+28	unk3 	2 	unknown, seems to be always 0
+30	Album Type 	1 	1 = master photo list ("Photo Library"), 2 = normal
+album, sometimes 4 and 5
+31	playMusic 	1 	play music during slideshow (from iPhoto setting)
+32	repeat 	1 	repeat the slideshow (from iPhoto setting)
+33	random 	1 	show the slides in random order (from iPhoto setting)
+34	showTitles 	1 	show slide captions (from iPhoto setting)
+35	transitionDirection 	1 	0=none, 1=left-to-right, 2=right-to-left,
+3=top-to-bottom, 4=bottom-to-top (from iPhoto setting)
+36	slideDuration 	4 	in seconds (from iPhoto setting)
+40	transitionDuration 	4 	in milliseconds (from iPhoto setting)
+44	unk7 	4 	unknown, seems to always be 0
+48	unk8 	4 	unknown, seems to always be 0
+52	dbid2 	8 	dbid2 of track in iTunesDB to play during slideshow (from
+iPhoto setting)
+60	prev playlist id 	4 	the id of the previous playlist
+
+Seems generated by this formula: value of the same field in the previous
+photo album MHBA + number of photos of the previous photo album + 1
+In particular, this formula is valid starting from the second album: in
+fact, the value of this field for the library is 100, and for the first
+photo album is 101.
+Example: if the first album contains 50 photos, the value of this field
+in the second album will be 152.
+
+rest of header is zero
+
+The MHBA has several children: The first is a MHOD containing the album
+name (which is ignored if the MHBA is the Photo Library). After that
+there are several MHIAs that define which image to show in that album.
+The MHBA that is marked as Photo Library contains one MHIA record for
+every photo on the iPod.
+
+On the new video iPods and nanos of recent vintage, the MHBA has a
+second MHOD as a child which contains a string of which specifies the
+transition effect configured in iPhoto for the slideshow associated with
+this album. Apparently, the iPod ignores the slideshow settings that
+come from iPhoto, except for the slideshow soundtrack.
+
+
+      Album Item
+
+*mhia format* field 	size 	value
+header identifier 	4 	mhia
+header length 	4 	size of the mhia header (0x28)
+total length? 	4 	probably the size of the header and all child records;
+as there aren't any child records this is equal to header length (40)
+unk1 	4 	seems to be zero
+image id 	4 	the id of the mhii record this mhia refers to
+rest of header is zero
+
+
+      File List
+
+*mhlf format* field 	size 	value
+header identifier 	4 	mhlf
+header length 	4 	size of the mhlf header (0x5c)
+number of files 	4 	the total number of files in the File List
+rest of header is zero padded
+
+The File List has Files (Images) as its children.
+
+
+      File (Image)
+
+*mhif format* field 	size 	value
+header identifier 	4 	mhif
+header length 	4 	size of the mhif header (0x7c)
+total length 	4 	size of the header and all child records
+unknown1 	4 	always seems to be 0
+correlation id 	4 	used to link this entry with a file and an Image
+Name, see Image Name for more details.
+image size 	4 	size of the image in bytes. A full sized thumbnail is
+39,200 bytes, a 'Now Playing' thumbnail is 6,272 bytes on the iPod
+Photo/Color. On the iPod Nano, a full sized thumbnail is 20,000 bytes
+while a 'Now Playing' thumbnail is 3,528 bytes.
+rest of header is zero padded
+
+
+      Data Object
+
+The MHODs found in the ArtworkDB and Photo Database files are
+significantly different than those found in the normal iTunesDB files.
+
+*mhod format* offset 	field 	size 	value
+0 	header identifier 	4 	mhod
+4 	header length 	4 	size of the MHOD header (0x18)
+8 	total length 	4 	size of the header and content, including child records
+12 	type 	2 	type of the MHOD, see below
+14 	unknown 	1 	unknown, always 0 so far
+15 	padding length 	1 	all MHODs must be zero-padded so that the length
+is a multiple of 4, this field contains the number of padding bytes
+added (e.g. 0, 1, 2 or 3). WARNING! This field was always set to 2 for a
+while. To avoid parser crash, the best way is to ignore it when parsing.
+16 	rest of header is zero padded
+
+There are 2 groups of types of MHODs in the ArtworkDB: container MHODs
+contain a MHNI as a child, while 'normal' string MHODs contain a string.
+
+*Attention*: Sometimes seems that the MHBAs in the new video and nano
+iPods' Photo Database have a second MHOD child which, although being
+identified by a type of 2, is a string (and not container) MHOD. This
+second string MHOD in photo album is usually found in Photo Database
+files generated on Macs, probably by iPhoto, and contains an UTF-8
+string describing a transition effect such as "Dissolve". However in
+Photo Database files generated on PCs for example by iTunes 6 for an
+iPod video 30Gb this does not happen, and there is only one type-1
+string MHOD as child, just like with iPod Photo/Color Photo Database files.
+
+*MHOD types* type 	group 	description
+1 	string 	Album name (in the Photo Database)
+2 	container 	Thumbnail image
+3 	string 	File name
+5 	container 	Full Resolution image (in the Photo Database)
+
+
+        Container MHODs
+
+MHODs with type 2 contain a MHNI that (contains a type 3 MHOD that)
+references a thumbnail. MHODs with type 5 contain a MHNI that (contains
+a type 3 MHOD that) references a full resolution image (in the Photo
+Database).
+
+
+        String MHODs
+
+The content of string MHODs (probably all types except 2 and 5, although
+only 1 and 3 have been observed so far) is structured again with
+something like a sub-header:
+
+*string mhod content format* field 	size 	value
+string length 	4 	length in bytes of the string (e.g. after encoding)
+unknown 	4 	might be the string encoding: 0,1 == UTF-8; 2 == UTF-16-LE.
+Observed values are: 1 in type 1 MHODs and 2 in type 3 MHODs.
+unknown 	4 	always zero?
+content 	variable 	the actual, encoded string content
+padding 	0..3 	zero to three bytes of padding to get the length of the
+whole MHOD to a multiple of 4, note that this is not included in the
+string length but *is* included in the total length
+
+
+→ Subpage: Misc. Files
+
+
+    iTunesSD file
+
+The iTunesSD file is in a big-endian byte order. It consists of a header
+followed by a bunch of entries, one after the other. The format is much
+simpler than the iTunesDB. Only the iPod Shuffle is known to use this
+file at the moment. The Shuffle uses only this file for playing songs,
+but nevertheless a valid iTunesDB must be present on the device. When
+connecting to iTunes, only the iTunesDB is read back, not the iTunesSD.
+
+*iTunesSD header format* field 	size 	value
+num songs 	3 	Number of song entries in the file.
+unknown 	3 	0x010600? iTunes 7.2 puts 0x010800 here
+header size 	3 	size of the header (0x12, 18 byte header)
+unknown 	9 	possibly zero padding
+rest of header is NOT zero padded
+
+*iTunesSD song entry format* field 	size 	value
+size of entry 	3 	Always 0x22e (558 bytes)
+unk1 	3 	unknown (always 0x5aa501 ?)
+starttime 	3 	Start Time, in 256 millisecond increments - e.g. 60
+seconds = 0xea (234 dec). The reason for this is that the iPodShuffle
+has only a simplistic "clock". Every millisecond it increments an 8 bit
+counter. When the counter overflows, this causes an interrupt or
+something like that which causes it to increment this "clock" value.
+Very simple clock, easy to do in a an 8-bit register. Basically multiply
+whatever value you find here by 0.256 to convert it to seconds. Leaving
+this as zero means it plays from the beginning of the file.
+unk2 	3 	unknown (always 0?)
+unk3 	3 	Unknown, but seems to be associated with start time (start time
+of 0xea resulted in unk3 = 0x1258ee)
+stoptime 	3 	Stop Time, also in 256 millisecond increments - e.g. 120
+seconds = 0x1d4 (468 dec). Leaving this as zero means it'll play to the
+end of the file.
+unk4 	3 	unknown
+unk5 	3 	Unknown, but seems to be associated with stop time (stop time
+of 0x1d4 resulted in unk5 = 0x24a830)
+volume 	3 	Volume - ranges from 0x00 (-100%) to 0x64 (0%) to 0xc8 (100%)
+file_type 	3 	0x01 = MP3, 0x02 = AAC, 0x04 = WAV
+unk6 	3 	0x200?
+filename 	522 	filename of the song, padded at the end with 0's, in
+UTF-16. Note: forward slashs are used here, not colons like in the
+iTunesDB - for example "/iPod_Control/Music/F00/Song.mp3".
+shuffleflag 	1 	If this value is 0x00, the song will be skipped in while
+the player is in shuffle mode. Any other value (iTunes uses 0x01) will
+allow it be played in both normal and shuffle modes. By default, iTunes
+4.7.1 sets this flag to 0x00 for audiobooks (.m4b and .aa), so they
+aren't played in shuffle mode.
+bookmarkflag 	1 	If this value is 0x00, the song will not be
+bookmarkable (i.e. its playback position won't be saved when switching
+to a different song). Any other value will make it bookmarkable. Unlike
+hard drive based iPods, all songs can be marked as bookmarkable - not
+just .m4b and .aa. However, iTunes might not use this bookmark
+information for songs other than actual audiobooks. By default, iTunes
+4.7.1 sets this flag to 0x01 for audiobooks (.m4b and .aa), and 0x00 for
+everything else.
+unknownflag 	1 	This has never been observed to be anything other than
+0x00, and setting it other values seemed to no effect.
+
+
+    iTunesStats File
+
+This seems to be the equivalent of the "Play Counts" file, where the
+Shuffle stores data that iTunes reads back in. Strangely, this file *is*
+byte reversed (little-endian). So a decimal 18 would be represented as
+0x12 0x00 0x00, for example.
+
+*iTunesStats header format* offset 	field 	size 	value
+0 	num songs 	3 	Number of song entries in the file (same as number of
+songs on the iPod Shuffle).
+3 	unknown 	3 	zero padding?
+
+*iTunesStats song entry format* offset 	field 	size 	value
+0 	size of entry 	3 	0x12 (18 bytes)
+3 	bookmarktime 	3 	Bookmarked position in the song in 256 millisecond
+increments (e.g. 0xee -> 60928 milliseconds = 60.928 seconds). If a
+song's playcount is zero, this field is 0xffffff. Otherwise, it is 0x0
+or the bookmarked time.
+6 	unk1 	3 	Somehow associated with bookmarktime (bookmarktime of 0x15f
+results in unk1 = 0x16db19, 0x1e4 -> unk1 = 0x1f3215). Probably the same
+formatting as seen in iTunesSD unk3 & unk5... Whatever the purpose, it
+doesn't seem to be used on the Shuffle - just supplying a valid
+bookmarktime works fine.
+9 	unk2 	3 	always 0?
+12 	playcount 	3 	Number of times this track has played to the end.
+15 	skippedcount 	3 	Number of times that the user has skipped past this
+song before its end.
+
+
+    iTunesShuffle File
+
+This file contains a list of the track index numbers, one after another.
+Each number is 3 bytes in length, and in little endian byte order
+(reverse byte order).
+
+The reason for this file is that it ensures that although the tracks are
+shuffled, they remain in the same order until you resync the
+iPodShuffle. That way you can turn the device on and off as many times
+as you like, and although the songs are shuffled, you can still back up
+and so forth.
+
+iTunesShuffle can either be created by the application, or the iPod
+Shuffle will automatically create it when necessary. It can also be
+recreated on the Shuffle by pressing the play/pause button three times
+within one second, thus reshuffling the order of songs on the fly.
+
+It also appears that the songs are automatically reshuffled if, while in
+shuffle playback mode, the player reaches the end of the playlist. So
+even if an application creates the iTunesShuffle file, the iPod Shuffle
+can and will replace it.
+
+
+    iTunesPState File
+
+This file keeps track of the current playback state of the iPod shuffle.
+It contains seven 24-bit little endian values (i.e. 3 bytes per number,
+reverse byte order). The iPod re-creates the file with default if it is
+missing.
+
+*iTunesPState format* field 	size 	value
+volume 	3 	The current playback volume. 0x1d (29) is the default value.
+The maximum value is 0x26 (38), at least for the European model.
+shufflepos 	3 	Current track number in the shuffle order. Value 0x00
+denotes the first song. In normal playback mode, this value is equal to
+the entry number in the iTunesSD file (see next field).
+trackno 	3 	Current track number in iTunesSD file order. Value 0x00
+denotes the first song.
+shuffleflag 	3 	0x00 in ordered playback mode, 0x01 in shuffle mode.
+trackpos 	3 	Current playback position inside the track, in bytes(?)
+unk1 	3 	high bits for trackpos?
+unk2 	3 	Always 0x01?
+
+
+    iTunesControl File
+
+It is quite big (several MB), and has no obvious header identifier.
+It seems to have a single data section written over and over again which
+equals 256 bytes each.
+You can see a pattern in the hex data section of growing word values.
+
+
+    iTunesPrefs File
+
+It seems to have a fixed length of 236 bytes.
+
+*iTunesPrefs format* offset 	field 	size 	value
+0	header identifier 	4 	frpd (0x66 0x72 0x70 0x64)
+4	unk1 	1 	01?
+5	unk2 	1 	00?
+6	unk3 	1 	03?
+7	unk4 	1 	00?
+8	iPod set up 	1 	0x00: iTunes has not set up iPod, 0x01: iTunes has set
+up iPod. Checked by iTunes to determine whether to present iPod set up
+dialog box.
+9	Open iTunes when attached 	1 	Open iTunes when iPod is Attached, 01
+for checked.
+10	Manual/Automatic Sync flag	1 	00 appears to be "Manually manage my
+songs", 01 appears to be "Automatic Sync"
+11	Sync Type	1 	01 Entire Library, 02 Selected Playlists
+12	iTunes Music Library Link Identifier 	8 	8 byte identifier of the
+last iTunes library synced to this iPod. Checked by iTunes to prevent
+automatic updates when you connect the iPod to other computers with
+iTunes/Libraries
+20	unk10 	4 	unknown, possibly part of unk11
+24	unk11 	4 	unknown, possibly part of unk10
+28	unk12 	1 	00? Various flags of some kind?
+29	unk13 	1 	00?
+30	unk14 	1 	01?
+31	Enable Disk Use 	1 	00 for disabling disk use, 01 to enabling disk use.
+32	unk16 	1 	00?
+33	unk17 	1 	01?
+34	Update Checked 	1 	01 for only update checked songs.
+35	unk19 	1 	01?
+36	unk20 	1 	01?
+37	padding? 	12 	zero padding?
+49	Show Artwork	1 	1 for Show Artwork in Ipod
+50	padding? 	2 	zero padding?
+52	Synchronize Photos	1	Synchronize Photos with iPod
+53	unk21 	2 	0x2010?
+55	Store Hi-res photos on iPod 	1 	1 for yes, 0 for no.
+56	padding? 	16 	zero padding?
+72	Transcode 	1 	01 For Transcode higher bitrate songs to 128 AAC
+(Shuffle only)
+73	Keep Ipod in the source list	1	Keep this ipod in the source list, 1
+for true (Shuffle only?)
+74	unk23 	15 	A bunch of other flags?
+89	Selected Podcast Sync Only	1	0x01 = Sync All Podcasts, 0x02 = Sync
+Selected Podcasts Only
+90	Manual/Automatic Podcast Sync	1	0x00 = Manually Manage Podcasts
+(selected flag is meaningless in this case), 0x01 = Autosync podcasts
+91	unk24 	5 	Five other flags?
+96	Identifier? 	8 	Same 8 byte ID as before
+104	songs on ipod 	2 	Somehow related to the songs / disc space allowed
+on the shuffle. Setting songs to 0 or setting filespace to 0 sets this
+to 0. (0x2000 for non-shuffles?)
+106	filespace saved on ipod 	2 	Somehow related to the songs / disc
+space allowed on the shuffle. Setting filespace to 0 sets this to 0.
+(0x0000 for non-shuffles?)
+108	padding? 	16 	zero padding?
+124	Sound Check 	1 	Use sound Check (shuffle only setting? Perhaps for
+transcoding purposes?)
+125	padding? 	111 	zero padding? undetermined flags?
+
+
+    winPrefs File
+
+It seems to have a fixed length of 16 bytes.
+
+*winPrefs format* field 	size 	value
+header identifier 	4 	frpw (0x66 0x72 0x70 0x77)
+unk1 	4 	Unknown.
+unk2 	4 	Unknown.
+unk3 	4 	Unknown.
+
+
+    DeviceInfo File
+
+This file has info on the iPod user's computer.
+It seems to have a fixed length of 1536 bytes.
+Each field is zero padded and in UTF-16LE text format.
+
+*DeviceInfo format* field 	size 	value
+Length of iPod name 	2 	The length in symbols (not in bytes) of the
+string immediately following.
+iPod name 	510 	The ipod name as defined in iTunes.
+Length of User name 	2 	The length in symbols (not in bytes) of the
+string immediately following.
+User name 	510 	The logged on username who last used the iPod with iTunes.
+Length of Computer name 	2 	The length in symbols (not in bytes) of the
+string immediately following.
+Computer name 	510 	The name of the computer who used the iPod.
+
+
+    iEKInfo File
+
+New file I found recently on a 3G iPod. Unknown purpose. The file looks
+to be big endian, and similar to the chapter info records found inside
+podcasts with chapters (as well as similar to the chapter info
+structures found in the iTunesDB file. One odd characteristic is that
+the file appears to contain no 4 character identifier at the beginning.
+Similar in structure to standard MPEG 4 metadata layouts.
+
+some more information on the structure of this file (/http://www.adg.us/
+article188.html/)
+
+Info copied from above webpage (adg.us):
+
+FILE HEADER:
+============
+ <uint32> - Size of file data (excluding this 64-byte header)
+ <60-zero-bytes> - Padding?
+FILE DATA BEGINS HERE:
+======================
+ <12-zero-bytes> - Padding?
+ <ATOM:"sean">
+   <uint32> - ID/number (should be 1)
+   <uint32> - No. of subatoms (should be at least 3)
+   <uint32> - Four zero bytes
+   <ATOM:"sym ">
+     <uint32> - ID/number (should be 1)
+     <uint32> - No. of subatoms ("sess" subatoms) - I expect it should be
+                at least 1
+     <uint32> - Four zero bytes
+     ONE OR MORE "sess" ATOMS:
+     =========================
+       <ATOM:"sess">
+         <uint32> - Session ID - Used to identify which keys are encrypted
+                    with this session
+         <uint32> - No. of subatoms - Should be 2 (one "valu" subatom, one
+                    "index" subatom)
+         <uint32> - Four zero bytes
+         <ATOM:"valu">
+           <uint32> - ID/number (should be 1)
+           <uint32> - No. of subatoms (should be zero)
+           <uint32> - Four zero bytes
+           <128 bytes of binary data> - The session key or something???
+           <128 zero bytes> - I don't know if all sessions are structured
+                              this way or not...  These last 128 bytes
+                              are ignored for playback purposes.
+         --- ("valu")
+         <ATOM:"indx">
+           <uint32> - ID/number (should be 1)
+           <uint32> - No. of subatoms (should be zero)
+           <uint32> - Four zero bytes
+           <uint32> - Every index I've seen thus far has the value six
+                      ('6') here.  Changing this broke playback on my
+                      iPod, so it's important for playback.
+         --- ("indx")
+       --- ("sess")
+     ===
+   --- ("sym ")
+   <ATOM:"user">
+     <uint32> - User ID (a.k.a. DSID)
+     <uint32> - Number of keys, or no. of "key " subatoms
+     <uint32> - Four zero bytes
+     ONE OR MORE "key " ATOMS:
+     =========================
+       <ATOM:"key ">
+         <uint32> - Key ID or key number
+         <uint32> - Number of subatoms (should be 1)
+         <uint32> - Four zero bytes
+         <ATOM:"valu">
+           <uint32> - Session ID used to encrypt this key's contents
+           <uint32> - No. of subatoms (Should be zero)
+           <uint32> - Four zero bytes
+           <16 bytes of binary data> - The key data, encrypted with the
+                                       specified session?
+         --- ("valu")
+       --- ("key")
+     ===
+   --- ("user")
+   THREE "guid" ATOMS: (Are there ever more?)
+   ===================
+     <ATOM:"guid">
+       <uint32> - GUID ID or number (should be one)
+       <uint32> - Number of subatoms (should be zero)
+       <uint32> - Four zero bytes
+       <GUID Data Bytes> - 256 bytes for the first 'guid' atom...
+         The first 9 bytes, if changed, appear to break playback on my
+         iPod.  The next three bytes contained data, but I could change
+         it without breaking playback.  Byte number 12 (position 11 if
+         the first byte is at position zero) was 1 for a while on my
+         iPod, but later was 2.  I didn't check to see if this changed
+         when I moved the iPod from one host computer to another.
+         On a 4G iPod, the first 8 bytes of this field are the iPod's FireWire ID.
+     --- ("guid")
+     <ATOM:"guid">
+       <uint32> - GUID ID or number (should be two)
+       <uint32> - Number of subatoms (should be zero)
+       <uint32> - Four zero bytes
+       <GUID Data Bytes> - 256 bytes for the second 'guid' atom...
+         This has got to be a global unique identifier based on which
+         host computer installation of iTunes the iPod is associated
+         with.  It changed when I moved my iPod from one of my host
+         computers to another.  But it didn't change when other
+         playlist and/or authorization changes changed the 'sess'
+         session atom.  The last 128 bytes are all zero-bytes, and
+         are ignored during playback.  I was able to randomly change
+         the last 128 bytes to anything without affecting playback.
+     --- ("guid")
+     <ATOM:"guid">
+       <uint32> - GUID ID or number (should be three)
+       <uint32> - Number of subatoms (should be zero)
+       <uint32> - Four zero bytes
+       <GUID Data Bytes> - 4 bytes
+         This is the final 'guid' atom, the last one, and yes, it's
+         only 4 bytes long, containing probably a <uint32> value.
+         It has been value six on my iPod.  Changing it broke my
+         iPod's ability to play audio files.  I see that the value
+         six shows up here, as well in the above 'indx' atom within
+         the 'sess' atom.  I can't help but think these two values
+         may be related somehow.
+     --- ("guid")
+   ===
+ --- ("sean")
+=== FILE DATA ENDS HERE
+
+
+    WABContactsGroup File
+
+New file I found recently on a 3G iPod. Unknown purpose, although
+probably related to the new Contacts sync, given the name. Assuming that
+this may be different for people syncing to Outlook instead of to the
+Windows Address Book (WAB). The file is 56 bytes in size.
+
+*WABContactsGroup format* field 	size 	value
+header identifier 	4 	frpd (0x66 0x72 0x70 0x64) (Yes, this matches the
+iTunesPrefs file identifier)
+padding? 	8 	zero padding
+unk1 	4 	0x04 02 00 00. Setting flags, perhaps?
+padding? 	40 	zero padding?
+
+
+    iTunesLock File
+
+This file is created right before iTunes modifies or reads anything on
+the iPod, and is deleted when it is finished. Does not contain any data,
+and is probably only used to make sure only one program at a time tries
+accessing the important files on the iPod at one time.
+
+
+    PhotosFolderName
+
+Lists the watched folders watched and syncronized with the Ipod. Found
+on the iPod video (probably on the Photo as well). It is a very simple
+format with the length of the folder name, preceeded by the folder name
+in unicode letters.
+
+
+    PhotoFolderPrefs
+
+Stores Photo Folder preferences.
+
+
+*PhotoFolderPrefs* offset 	field 	size 	value
+0	header identifier 	4 	frpd same as iTunesPrefs
+4	unk1 	4 	01?
+8	unk2 	4 	01?
+12	unk3 	4 	 ?
+16	unk3 	80 	zero padding?
+96	folder name 	 ?? 	The watch folders names
+
+
+    PhotoFolderAlbums
+
+Stores Photo Albums .
+
+
+*PhotoFolderAlbums* offset 	field 	size 	value
+0	header identifier 	4 	frpd same as iTunesPrefs
+4	unk1 	2 	01?
+6	unk2 	2 	01?
+8	unk3 	1 	01?
+9	unk4 	1 	01?
+10	unk5 	2 	00?
+12	Number of Folders 	4 	Number of folders to that are directly below
+the folder pointed out in PhotoFolderPrefs. From offset 100 on, the
+folder name datastructure will repeat this many times.
+16	unk7 	1 	01?
+17	unk8 	1 	01?
+18	unk9 	2 	00?
+20	unk10 	4 	01?
+26	unk11 	74 	zero padding?
+100	is synched	4	Whether or not the folder is synched. 1 if is, 0 if it
+isn't.
+104	string legnth 	2 	Length of the name of the albums to follow
+106	album name 	510 	Name of the album to follow
+From 100-514 repeats as many times as in Number of folders (see offset 12)
+
+
+    iTunesPlaylists
+
+
+Keeps track of the iTunesPlaylists???
+
+
+    iTunesPodcasts
+
+
+Keeps track of the iTunesPodcasts???
+
+
+    iTunesVideoPlaylists
+
+
+Keeps track of the iTunesVideoPlaylists???
+
+
+    Preferences
+
+Located at /iPod_Control/Device/Preferences.
+
+*Preferences* offset 	field 	size 	value
+0x6BC (1724)	DST-Setting (3g nano)	1 	Set to 0x3C (=60) if DST is set.
+Otherwise 0x00
+2808	Language Selection	1 	Defines the menu language selected in your
+iPod doing Settings->Language. English is 0.
+2832	Timezone Information	1 	Timezone information.
+0xB50 (2896)	Volume Limit	1 	Volume limit value on firmware 1.1.1 for 5G
+and nano. Range: 0-64
+0xB70 (2928)	Region (3g nano)	1 	Selected region/timezone: 0x4f =
+London, 0x55 = Zurich, 0x5d = Geneva ... Seen on 3g-Nano. This might
+also be used to calculate the timezone offset because changing the
+timezone from Geneva to London only changes this offset. (Or is it a
+bug? The Nano displays London as UTC-1 (!)
+
+I'm unsure what is the best way to parse the timezone information field,
+but the previous explanation that it's the timezone information in 30
+minutes steps is wrong, it doesn't hold up during DST. Something that
+works is to substract 0x19 (this corresponds to UTC+0) to that value.
+The resulting value divided by 2 gives the timezone (in hours), and the
+less significant bit (ie the resulting value modulo 2) indicates if DST
+is active or not (1 => DST active). When the DST bit is set, 1 hour must
+be added to the timezone value.
+
+
+*Example:*Selecting /Paris (DST)/ will set this offset to 0x1c: (0x1c -
+0x19) = 0x03 0x03 / 2 = 1 0x03 % 2 = 1 which gives us a GMT+2 timezone
+
+
+    _volumelocked
+
+Located at /iPod_Control/Device/
+
+Exists when a 4-digit combination has been set for the Volume Limit on
+5Gs and nanos (firmware 1.1.1). File length is 0x20. Appears to be
+encrypted? However, deleting the file removes the volume limit :-)
+
+Retrieved from "http://ipodlinux.org/ITunesDB <http://www.ipodlinux.org/>"
+
+Categories: Documentation | Development
+
+
+Views
+
+  * Article <http://www.ipodlinux.org/>
+
+
+Personal tools
+
+<http://www.ipodlinux.org/>
+
+
+Navigation
+
+  * Ipod Linux <http://www.ipodlinux.org/>
+
+------------------------------------------------------------------------
+
+  * Documentation <http://www.ipodlinux.org/Documentation/>
+  * Downloads <http://www.ipodlinux.org/Downloads/>
+  * Screenshots <http://www.ipodlinux.org/Screenshots/>
+  * Contributors <http://www.ipodlinux.org/Contributors.html>
+  * Links <http://www.ipodlinux.org/Links.html>
+  * Donations <http://www.ipodlinux.org/Donations.html>
+
+------------------------------------------------------------------------
+
+  * Recent Changes <http://www.ipodlinux.org/Special_Recentchanges.html>
+  * All Pages <http://www.ipodlinux.org/Special_Allpages.html>
+  * Help <http://www.ipodlinux.org/Help_Contents.html>
+
+
+Toolbox
+
+  * ipod generations <http://www.ipodlinux.org/Generations/>
+  * Related changes <http://www.ipodlinux.org/Special_Recentchanges.html>
+  * Special pages <http://www.ipodlinux.org/Special_Specialpages.html>
+
+SourceForge.net Logo
+
+  * This page was last modified 18:55, 26 Apr 2017.
+  * This page has been accessed 125659 times.
+  * Content is available under GNU Free Documentation License 1.2
+    <http://www.gnu.org/copyleft/fdl.html>.
+  * About wikiPodLinux <http://www.ipodlinux.org/iPodLinux_About.html>
+  * Disclaimers <http://www.ipodlinux.org/iPodLinux_General_disclaimer.html>
